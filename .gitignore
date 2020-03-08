@@ -1,7 +1,7 @@
 # Global
 *.class
+target/*
 
 # NLP
-movie_conversations.txt
-movie_lines.txt
-org/lara/nlp/Main.java
+RES/*
+src/main/java/org/lara/nlp/Main.java
