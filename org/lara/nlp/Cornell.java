@@ -2,7 +2,6 @@ package org.lara.nlp;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException; 
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -74,6 +73,7 @@ class Cornell extends Context {
 				_conversation = _conversation.replace(" ","");
 				conversations_ids.add(_conversation.split(","));
 			}
+			reader.close();
 			return conversations_ids;
 		} catch (Exception e) {
 			System.err.format("Exception occurred trying to read '%s'.", conversations_filename);
