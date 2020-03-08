@@ -9,14 +9,18 @@ import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreproc
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import java.util.ArrayList;
+import de.biomedical_imaging.edu.wlu.cs.levy.CG.KDTree;
 
-class Dj4jWord2Vec {
+class Dj4jWord2Vec extends Word {
 	// Structure
-	Word2Vec vec;
+	private Word2Vec vec;
+	private SentenceIterator iter;
 
 	// Constructor
-	public Dj4jWord2Vec(ArrayList<String> words, Integer minWordFrequency, Integer iterations, Integer epochs) {
-		SentenceIterator iter = new CollectionSentenceIterator(words);
+	public Dj4jWord2Vec(ArrayList<String> words, Integer minWordFrequency, Integer iterations, Integer epochs, Integer dimension) {
+		this.words = words;
+		kd = new KDTree<String>(dimension);
+		iter = new CollectionSentenceIterator(words);
 		iter.setPreProcessor(new SentencePreProcessor() {
             @Override
             public String preProcess(String sentence) {
@@ -30,7 +34,7 @@ class Dj4jWord2Vec {
                 .minWordFrequency(minWordFrequency)  // exclude words we can't build an accurate context for
                 .iterations(iterations)
                 .epochs(epochs)
-                .layerSize(100)  // the number of features in the word vector
+                .layerSize(dimension)  // the number of features in the word vector
                 .seed(42)
                 .windowSize(5)   // rolling skip gram window size
                 .iterate(iter)   // the input sentences
@@ -46,6 +50,7 @@ class Dj4jWord2Vec {
 	// Initialiaze
 	public void init() {
         vec.fit();
+        initKD();
 	}
 
 	// Output to a file
@@ -53,8 +58,13 @@ class Dj4jWord2Vec {
 		WordVectorSerializer.writeWordVectors(vec, path);
 	}
 
-	// Output to a file
+	// Output model to a file
 	public void save_model(String path) throws Exception {
 		WordVectorSerializer.writeWord2VecModel(vec, path);
+	}
+
+	// Convert a word to a vector
+	public double[] word2vec(String word) {
+		return vec.getWordVector(word);
 	}
 }

@@ -3,52 +3,46 @@ package org.lara.nlp;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import de.biomedical_imaging.edu.wlu.cs.levy.CG.KDTree;
 
 class HotWord extends Word {
-	// Context
-	ArrayList<String> words; 
 	// Structure
-	private HashMap<String,Integer> words_to_int;
-	private HashMap<Integer,String> int_to_words;
+	private String alphabet;
+	private Integer length_alphabet;
+	private HashMap<Character,Integer> char_index;
 
 	// Constructor
-	public HotWord(ArrayList<String> words) {
+	public HotWord(ArrayList<String> words, String alphabet) {
+		this.alphabet = alphabet;
+		this.length_alphabet = alphabet.length();
 		this.words = words;
-		words_to_int = new HashMap<String,Integer>();
-		int_to_words = new HashMap<Integer,String>();
+		kd = new KDTree<String>(length_alphabet);
+		char_index = new HashMap<Character,Integer>();
 	}
 
-	// Initialise everything
+	// Initialize everything
 	public void init() {
-		getWordCount();
-		inverseDictionnary();
+		initCharIndex();
+		initKD();
 	}
 
-	// Creating a dictionary that maps each word to its number of occurrences
-	private void getWordCount() {
-		for (String s: words) {
-			for (String w: s.split(" ")) {
-				if (!(words_to_int.containsKey(w))) {
-					words_to_int.put(w,1);
-				} else {
-					words_to_int.put(w,words_to_int.get(w)+1);
-				}
-			}
+	// Initialize char indexes
+	private void initCharIndex() {
+		int count = 0;
+		for (int i = 0; i < length_alphabet; i++) {
+			char_index.put(alphabet.charAt(i),count);
+			count++;
 		}
 	}
 
-	// Create inverse dictionnaries
-	private void inverseDictionnary() {
-		for (Map.Entry<String, Integer> entry: words_to_int.entrySet()) {
-			int_to_words.put(entry.getValue(), entry.getKey());
+	// Implement word API
+	public double[] word2vec(String word) {
+		double[] ret = new double[length_alphabet];
+		for (int i = 0; i < word.length(); i++) {
+			System.out.println(word.charAt(i));
+			int tmp = char_index.get(word.charAt(i));
+			ret[tmp] = 1.;
 		}
-	}
-
-	// Implement core API
-	public int word2int(String word) {
-		return words_to_int.get(word);
-	}
-	public String int2word(Integer code) {
-		return int_to_words.get(code);
+		return ret;
 	}
 }
