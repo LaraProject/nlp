@@ -16,9 +16,8 @@ import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreproc
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import java.util.ArrayList;
-import java.io.File;
 
-public class DL4JSequenceVectors {
+class DL4JSequenceVectors {
 	// Structure
 	SequenceVectors < VocabWord > vectors;
 
@@ -66,8 +65,8 @@ public class DL4JSequenceVectors {
 		vectors.fit();
 	}
 
-	// Convert a word to a vector
-	public INDArray word2vec(String word) {
-		return vectors.lookupTable().vector(word);
+	// Get the the model
+	public WordVectors getModel() {
+		return vectors;
 	}
 }

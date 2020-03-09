@@ -9,20 +9,15 @@ class HotWord {
 	private String alphabet;
 	private Integer length_alphabet;
 	private HashMap < Character, Integer > char_index;
+	private ArrayList< String > words;
 
 	// Constructor
 	public HotWord(ArrayList < String > words, String alphabet) {
 		this.alphabet = alphabet;
 		this.length_alphabet = alphabet.length();
 		this.words = words;
-		kd = new KDTree < String > (length_alphabet);
 		char_index = new HashMap < Character, Integer > ();
-	}
-
-	// Initialize everything
-	public void init() {
 		initCharIndex();
-		initKD();
 	}
 
 	// Initialize char indexes

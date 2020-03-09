@@ -16,15 +16,8 @@ class Dj4jWord2Vec {
 
 	// Constructor
 	public Dj4jWord2Vec(ArrayList < String > words, Integer minWordFrequency, Integer iterations, Integer epochs, Integer dimension) {
-		this.words = words;
-		kd = new KDTree < String > (dimension);
-		iter = new CollectionSentenceIterator(words);
-		iter.setPreProcessor(new SentencePreProcessor() {
-			@Override
-			public String preProcess(String sentence) {
-				return sentence.toLowerCase();
-			}
-		});
+		// Iterator
+		SentenceIterator iter = new CollectionSentenceIterator(words);
 		// Split on white spaces in the line to get words
 		TokenizerFactory t = new DefaultTokenizerFactory();
 		t.setTokenPreProcessor(new CommonPreprocessor());
@@ -38,7 +31,7 @@ class Dj4jWord2Vec {
 			.iterate(iter) // the input sentences
 			.tokenizerFactory(t) // the tokenizer
 			.build();
-		vec.fit()
+		vec.fit();
 	}
 
 	// Constructor with a given model
@@ -46,18 +39,8 @@ class Dj4jWord2Vec {
 		vec = WordVectorSerializer.readWord2VecModel(model_path);
 	}
 
-	// Output to a file
-	public void write_file(String path) throws Exception {
-		WordVectorSerializer.writeWordVectors(vec, path);
-	}
-
-	// Output model to a file
-	public void save_model(String path) throws Exception {
-		WordVectorSerializer.writeWord2VecModel(vec, path);
-	}
-
-	// Convert a word to a vector
-	public double[] word2vec(String word) {
-		return vec.getWordVector(word);
+	// Get the the model
+	public WordVectors getModel() {
+		return vec;
 	}
 }
