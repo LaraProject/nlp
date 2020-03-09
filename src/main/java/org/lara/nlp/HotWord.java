@@ -3,21 +3,20 @@ package org.lara.nlp;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
-import de.biomedical_imaging.edu.wlu.cs.levy.CG.KDTree;
 
-class HotWord extends Word {
+class HotWord {
 	// Structure
 	private String alphabet;
 	private Integer length_alphabet;
-	private HashMap<Character,Integer> char_index;
+	private HashMap < Character, Integer > char_index;
 
 	// Constructor
-	public HotWord(ArrayList<String> words, String alphabet) {
+	public HotWord(ArrayList < String > words, String alphabet) {
 		this.alphabet = alphabet;
 		this.length_alphabet = alphabet.length();
 		this.words = words;
-		kd = new KDTree<String>(length_alphabet);
-		char_index = new HashMap<Character,Integer>();
+		kd = new KDTree < String > (length_alphabet);
+		char_index = new HashMap < Character, Integer > ();
 	}
 
 	// Initialize everything
@@ -30,7 +29,7 @@ class HotWord extends Word {
 	private void initCharIndex() {
 		int count = 0;
 		for (int i = 0; i < length_alphabet; i++) {
-			char_index.put(alphabet.charAt(i),count);
+			char_index.put(alphabet.charAt(i), count);
 			count++;
 		}
 	}
