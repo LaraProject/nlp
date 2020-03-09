@@ -4,10 +4,11 @@ import org.deeplearning4j.models.embeddings.WeightLookupTable;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
 import org.deeplearning4j.models.embeddings.learning.impl.elements.SkipGram;
 import org.deeplearning4j.models.embeddings.loader.VectorsConfiguration;
-import org.deeplearning4j.models.embeddings.wordvectors.WordVectors;
+import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.sequencevectors.SequenceVectors;
 import org.deeplearning4j.models.sequencevectors.iterators.AbstractSequenceIterator;
 import org.deeplearning4j.models.sequencevectors.transformers.impl.SentenceTransformer;
+import org.deeplearning4j.models.sequencevectors.serialization.VocabWordFactory;
 import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.wordstore.VocabConstructor;
 import org.deeplearning4j.models.word2vec.wordstore.inmemory.AbstractCache;
@@ -17,6 +18,7 @@ import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreproc
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import java.util.ArrayList;
+import java.io.File;
 
 class DL4JSequenceVectors {
 	// Structure
@@ -66,8 +68,13 @@ class DL4JSequenceVectors {
 		vectors.fit();
 	}
 
-	// Get the the model
-	public WordVectors getModel() {
-		return vectors;
+	// Load the model
+	public DL4JSequenceVectors(String path) throws Exception {
+		vectors = WordVectorSerializer.readSequenceVectors(new VocabWordFactory(), new File(path));
+
+	}
+	// Save the model
+	public void save_model(String path) throws Exception {
+		WordVectorSerializer.writeSequenceVectors(vectors, new VocabWordFactory(), path);
 	}
 }

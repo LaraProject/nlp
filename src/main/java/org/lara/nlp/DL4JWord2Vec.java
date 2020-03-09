@@ -36,12 +36,15 @@ class Dj4jWord2Vec {
 	}
 
 	// Constructor with a given model
-	public Dj4jWord2Vec(String model_path) {
-		vec = WordVectorSerializer.readWord2VecModel(model_path);
+	public Dj4jWord2Vec(String path) throws Exception {
+		vec = WordVectorSerializer.readWord2VecModel(path);
 	}
-
-	// Get the the model
-	public WordVectors getModel() {
-		return vec;
+	// Output to a file
+	public void write_vectors(String path) throws Exception {
+		WordVectorSerializer.writeWordVectors(vec, path);
+	}
+	// Save the model
+	public void save_model(String path) throws Exception {
+		vec = WordVectorSerializer.readWord2VecModel(path);
 	}
 }

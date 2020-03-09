@@ -1,6 +1,6 @@
 package org.lara.nlp;
 
-import org.deeplearning4j.models.embeddings.wordvectors.WordVectors;
+import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.glove.Glove;
 import org.deeplearning4j.text.sentenceiterator.BasicLineIterator;
 import org.deeplearning4j.text.sentenceiterator.CollectionSentenceIterator;
@@ -34,8 +34,8 @@ class DL4JGlove {
 		glove.fit();
     }
 
-    // Get the the model
-    public WordVectors getModel() {
-        return glove;
+    // Output to a file
+    public void write_vectors(String path) throws Exception {
+        WordVectorSerializer.writeWordVectors(glove, path);
     }
 }
