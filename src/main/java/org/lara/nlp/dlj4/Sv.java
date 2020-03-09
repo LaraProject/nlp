@@ -1,4 +1,4 @@
-package org.lara.nlp;
+package org.lara.nlp.dlj4;
 
 import org.deeplearning4j.models.embeddings.WeightLookupTable;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
@@ -20,11 +20,11 @@ import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import java.util.ArrayList;
 import java.io.File;
 
-class DL4JSequenceVectors {
+public class Sv {
 	// Structure
 	SequenceVectors < VocabWord > vectors;
 
-	public DL4JSequenceVectors(ArrayList < String > sentences) {
+	public Sv(ArrayList < String > sentences) {
 		AbstractCache < VocabWord > vocabCache = new AbstractCache.Builder < VocabWord > ().build();
 		// First we build line iterator
 		SentenceIterator underlyingIterator = new CollectionSentenceIterator(sentences);
@@ -69,12 +69,16 @@ class DL4JSequenceVectors {
 	}
 
 	// Load the model
-	public DL4JSequenceVectors(String path) throws Exception {
+	public Sv(String path) throws Exception {
 		vectors = WordVectorSerializer.readSequenceVectors(new VocabWordFactory(), new File(path));
 
 	}
 	// Save the model
 	public void save_model(String path) throws Exception {
 		WordVectorSerializer.writeSequenceVectors(vectors, new VocabWordFactory(), path);
+	}
+	// Write vectors
+	public void write_vectors(String path) throws Exception {
+		save_model(path);
 	}
 }

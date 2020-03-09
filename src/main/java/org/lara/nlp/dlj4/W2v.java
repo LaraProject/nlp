@@ -1,4 +1,4 @@
-package org.lara.nlp;
+package org.lara.nlp.dlj4;
 
 import org.deeplearning4j.models.embeddings.wordvectors.WordVectors;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
@@ -11,12 +11,12 @@ import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFac
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import java.util.ArrayList;
 
-class Dj4jWord2Vec {
+public class W2v {
 	// Structure
 	private Word2Vec vec;
 
 	// Constructor
-	public Dj4jWord2Vec(ArrayList < String > words, Integer minWordFrequency, Integer iterations, Integer epochs, Integer dimension) {
+	public W2v(ArrayList < String > words, Integer minWordFrequency, Integer iterations, Integer epochs, Integer dimension) {
 		// Iterator
 		SentenceIterator iter = new CollectionSentenceIterator(words);
 		// Split on white spaces in the line to get words
@@ -36,7 +36,7 @@ class Dj4jWord2Vec {
 	}
 
 	// Constructor with a given model
-	public Dj4jWord2Vec(String path) throws Exception {
+	public W2v(String path) throws Exception {
 		vec = WordVectorSerializer.readWord2VecModel(path);
 	}
 	// Output to a file

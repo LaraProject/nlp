@@ -1,4 +1,4 @@
-package org.lara.nlp;
+package org.lara.nlp.dlj4;
 
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.glove.Glove;
@@ -10,11 +10,11 @@ import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFac
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import java.util.ArrayList;
 
-class DL4JGlove {
+public class Glv {
     // Structure
     Glove glove;
 
-    public DL4JGlove(ArrayList < String > sentences) {
+    public Glv(ArrayList < String > sentences) {
 		// Creating SentenceIterator wrapping our training corpus
         SentenceIterator iter = new CollectionSentenceIterator(sentences);
 		// Split on white spaces in the line to get words
