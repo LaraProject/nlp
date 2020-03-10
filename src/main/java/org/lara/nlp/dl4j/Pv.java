@@ -25,10 +25,10 @@ public class Pv {
 			.build();
 	}
 
-    // Output to a file
-    public void write_vectors(String path) throws Exception {
-        WordVectorSerializer.writeParagraphVectors(vectors, path);
-    }
+	// Output to a file
+	public void write_vectors(String path) throws Exception {
+		WordVectorSerializer.writeParagraphVectors(vectors, path);
+	}
 
 	// Convert a sentence to a vector
 	public INDArray sentence2vector(String sentence) {

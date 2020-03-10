@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 class Cornell extends Context {
 	// Structure
-	public ArrayList < String > questions;
-	public ArrayList < String > answers;
-	private HashMap < String, String > id_to_line;
-	private ArrayList < String[] > conversations_ids;
+	public ArrayList<String> questions;
+	public ArrayList<String> answers;
+	private HashMap<String,String> id_to_line;
+	private ArrayList<String[]> conversations_ids;
 	// Limits
 	private Integer min_length;
 	private Integer max_length;
@@ -19,8 +19,8 @@ class Cornell extends Context {
 	public Cornell(String lines_filename, String conversations_filename, Integer min_length, Integer max_length) {
 		id_to_line = getLines(lines_filename);
 		conversations_ids = getConversations(conversations_filename);
-		questions = new ArrayList < String > ();
-		answers = new ArrayList < String > ();
+		questions = new ArrayList<String> ();
+		answers = new ArrayList<String> ();
 		this.min_length = min_length;
 		this.max_length = max_length;
 	}
@@ -33,8 +33,8 @@ class Cornell extends Context {
 	}
 
 	// Creating a dictionary that maps each line with its id
-	private static HashMap < String, String > getLines(String lines_filename) {
-		HashMap < String, String > id_to_line = new HashMap < String, String > ();
+	private static HashMap<String,String> getLines(String lines_filename) {
+		HashMap<String,String> id_to_line = new HashMap<String,String> ();
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(lines_filename));
 			String line;
@@ -58,8 +58,8 @@ class Cornell extends Context {
 
 	// Creating a list of all of the conversations
 	// TODO: Optitmize me (no lists)
-	private static ArrayList < String[] > getConversations(String conversations_filename) {
-		ArrayList < String[] > conversations_ids = new ArrayList < String[] > ();
+	private static ArrayList<String[]> getConversations(String conversations_filename) {
+		ArrayList<String[]> conversations_ids = new ArrayList<String[]> ();
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(conversations_filename));
 			String conversation;
@@ -115,8 +115,8 @@ class Cornell extends Context {
 
 	// Clean questions and answers
 	private void cleanQuestionsAnswers() {
-		ArrayList < String > clean_questions = new ArrayList < String > ();
-		ArrayList < String > clean_answers = new ArrayList < String > ();
+		ArrayList<String> clean_questions = new ArrayList<String> ();
+		ArrayList<String> clean_answers = new ArrayList<String> ();
 		for (String q: questions)
 			clean_questions.add(clean_text(q));
 		for (String a: answers)
@@ -127,8 +127,8 @@ class Cornell extends Context {
 
 	// Filter out the questions and answers that are too short or too long
 	private void lengthFilter() {
-		ArrayList < String > short_questions = new ArrayList < String > ();
-		ArrayList < String > short_answers = new ArrayList < String > ();
+		ArrayList<String> short_questions = new ArrayList<String> ();
+		ArrayList<String> short_answers = new ArrayList<String> ();
 		int i = 0;
 		int l = 0;
 		for (String q: questions) {
@@ -139,8 +139,8 @@ class Cornell extends Context {
 			}
 			i++;
 		}
-		ArrayList < String > clean_questions = new ArrayList < String > ();
-		ArrayList < String > clean_answers = new ArrayList < String > ();
+		ArrayList<String> clean_questions = new ArrayList<String> ();
+		ArrayList<String> clean_answers = new ArrayList<String> ();
 		i = 0;
 		for (String a: short_answers) {
 			l = (a.split(" ")).length;

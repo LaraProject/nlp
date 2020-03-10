@@ -11,12 +11,12 @@ import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import java.util.ArrayList;
 
 public class Glv {
-    // Structure
-    Glove glove;
+	// Structure
+	Glove glove;
 
-    public Glv(ArrayList < String > sentences) {
+	public Glv(ArrayList<String> sentences) {
 		// Creating SentenceIterator wrapping our training corpus
-        SentenceIterator iter = new CollectionSentenceIterator(sentences);
+		SentenceIterator iter = new CollectionSentenceIterator(sentences);
 		// Split on white spaces in the line to get words
 		TokenizerFactory t = new DefaultTokenizerFactory();
 		t.setTokenPreProcessor(new CommonPreprocessor());
@@ -32,12 +32,12 @@ public class Glv {
 			.symmetric(true)
 			.build();
 		glove.fit();
-    }
+	}
 
-    // Output to a file
-    public void write_vectors(String path) throws Exception {
-        WordVectorSerializer.writeWordVectors(glove, path);
-    }
+	// Output to a file
+	public void write_vectors(String path) throws Exception {
+		WordVectorSerializer.writeWordVectors(glove, path);
+	}
 
 	// Get the cosine similarity
 	public double similarity(String word1, String word2) {

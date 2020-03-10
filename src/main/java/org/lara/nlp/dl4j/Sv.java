@@ -22,10 +22,10 @@ import java.io.File;
 
 public class Sv {
 	// Structure
-	SequenceVectors < VocabWord > vectors;
+	SequenceVectors<VocabWord> vectors;
 
-	public Sv(ArrayList < String > sentences) {
-		AbstractCache < VocabWord > vocabCache = new AbstractCache.Builder < VocabWord > ().build();
+	public Sv(ArrayList<String> sentences) {
+		AbstractCache<VocabWord> vocabCache = new AbstractCache.Builder<VocabWord> ().build();
 		// First we build line iterator
 		SentenceIterator underlyingIterator = new CollectionSentenceIterator(sentences);
 		// Convert lines into Sequences of VocabWords with SentenceTransformer
@@ -36,23 +36,23 @@ public class Sv {
 			.tokenizerFactory(t)
 			.build();
 		// Pack that transformer into AbstractSequenceIterator
-		AbstractSequenceIterator < VocabWord > sequenceIterator =
+		AbstractSequenceIterator<VocabWord> sequenceIterator =
 			new AbstractSequenceIterator.Builder < > (transformer).build();
 		// Build vocabulary out of sequence iterator.
-		VocabConstructor < VocabWord > constructor = new VocabConstructor.Builder < VocabWord > ()
+		VocabConstructor<VocabWord> constructor = new VocabConstructor.Builder<VocabWord> ()
 			.addSource(sequenceIterator, 5)
 			.setTargetVocabCache(vocabCache)
 			.build();
 		constructor.buildJointVocabulary(false, true);
 		// Build WeightLookupTable instance for our new model
-		WeightLookupTable < VocabWord > lookupTable = new InMemoryLookupTable.Builder < VocabWord > ()
+		WeightLookupTable<VocabWord> lookupTable = new InMemoryLookupTable.Builder<VocabWord> ()
 			.vectorLength(150)
 			.useAdaGrad(false)
 			.cache(vocabCache)
 			.build();
 		lookupTable.resetWeights(true);
 		// Build AbstractVectors model
-		vectors = new SequenceVectors.Builder < VocabWord > (new VectorsConfiguration())
+		vectors = new SequenceVectors.Builder<VocabWord> (new VectorsConfiguration())
 			.minWordFrequency(5)
 			.lookupTable(lookupTable)
 			.iterate(sequenceIterator)
@@ -63,7 +63,7 @@ public class Sv {
 			.resetModel(false)
 			.trainElementsRepresentation(true)
 			.trainSequencesRepresentation(false)
-			.elementsLearningAlgorithm(new SkipGram < VocabWord > ())
+			.elementsLearningAlgorithm(new SkipGram<VocabWord> ())
 			.build();
 		vectors.fit();
 	}
@@ -90,7 +90,7 @@ public class Sv {
 	}
 
 	// Export the model
-	public SequenceVectors< VocabWord > getModel() {
+	public SequenceVectors<VocabWord> getModel() {
 		return vectors;
 	}
 }
