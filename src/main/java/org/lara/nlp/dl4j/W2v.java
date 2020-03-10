@@ -1,4 +1,4 @@
-package org.lara.nlp.dlj4;
+package org.lara.nlp.dl4j;
 
 import org.deeplearning4j.models.embeddings.wordvectors.WordVectors;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
@@ -39,12 +39,24 @@ public class W2v {
 	public W2v(String path) throws Exception {
 		vec = WordVectorSerializer.readWord2VecModel(path);
 	}
+
 	// Output to a file
 	public void write_vectors(String path) throws Exception {
 		WordVectorSerializer.writeWordVectors(vec, path);
 	}
+
 	// Save the model
 	public void save_model(String path) throws Exception {
 		vec = WordVectorSerializer.readWord2VecModel(path);
+	}
+
+	// Get the cosine similarity
+	public double similarity(String word1, String word2) {
+		return vec.similarity(word1, word2);
+	}
+
+	// Export the model
+	public Word2Vec getModel() {
+		return vec;
 	}
 }

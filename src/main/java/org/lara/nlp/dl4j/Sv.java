@@ -1,4 +1,4 @@
-package org.lara.nlp.dlj4;
+package org.lara.nlp.dl4j;
 
 import org.deeplearning4j.models.embeddings.WeightLookupTable;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
@@ -73,12 +73,24 @@ public class Sv {
 		vectors = WordVectorSerializer.readSequenceVectors(new VocabWordFactory(), new File(path));
 
 	}
+
 	// Save the model
 	public void save_model(String path) throws Exception {
 		WordVectorSerializer.writeSequenceVectors(vectors, new VocabWordFactory(), path);
 	}
+
 	// Write vectors
 	public void write_vectors(String path) throws Exception {
 		save_model(path);
+	}
+
+	// Get the cosine similarity
+	public double similarity(String word1, String word2) {
+		return vectors.similarity(word1, word2);
+	}
+
+	// Export the model
+	public SequenceVectors< VocabWord > getModel() {
+		return vectors;
 	}
 }

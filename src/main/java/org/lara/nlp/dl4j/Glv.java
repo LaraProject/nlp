@@ -1,4 +1,4 @@
-package org.lara.nlp.dlj4;
+package org.lara.nlp.dl4j;
 
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.glove.Glove;
@@ -38,4 +38,14 @@ public class Glv {
     public void write_vectors(String path) throws Exception {
         WordVectorSerializer.writeWordVectors(glove, path);
     }
+
+	// Get the cosine similarity
+	public double similarity(String word1, String word2) {
+		return glove.similarity(word1, word2);
+	}
+
+	// Export the model
+	public Glove getModel() {
+		return glove;
+	}
 }
