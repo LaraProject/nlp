@@ -10,8 +10,8 @@ abstract class Context {
 	public ArrayList<String> answers;
 	public abstract void init();
 	// Limits
-	public Integer min_length;
-	public Integer max_length;
+	public int min_length;
+	public int max_length;
 
 	// Execute the cleaning
 	public void cleaning() {

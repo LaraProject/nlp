@@ -12,7 +12,7 @@ public class Cornell extends Context {
 	private ArrayList<String[]> conversations_ids;
 
 	// Constructor
-	public Cornell(String lines_filename, String conversations_filename, Integer min_length, Integer max_length) {
+	public Cornell(String lines_filename, String conversations_filename, int min_length, int max_length) {
 		id_to_line = getLines(lines_filename);
 		conversations_ids = getConversations(conversations_filename);
 		questions = new ArrayList<String> ();

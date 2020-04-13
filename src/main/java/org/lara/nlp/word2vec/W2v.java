@@ -16,8 +16,8 @@ public class W2v {
 	private Word2Vec vec;
 
 	// Constructor
-	public W2v(ArrayList<String> words, Integer minWordFrequency, Integer iterations, Integer epochs,
-		Integer dimension) {
+	public W2v(ArrayList<String> words, int minWordFrequency, int iterations, int epochs,
+		int dimension) {
 		// Iterator
 		SentenceIterator iter = new CollectionSentenceIterator(words);
 		// Split on white spaces in the line to get words

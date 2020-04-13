@@ -8,10 +8,10 @@ class Processer {
 	private ArrayList<String> questions;
 	private ArrayList<String> answers;
 	// Limits
-	private Integer min_length;
-	private Integer max_length;
+	private int min_length;
+	private int max_length;
 
-	public Processer(ArrayList<String> questions, ArrayList<String> answers, Integer min_length, Integer max_length) {
+	public Processer(ArrayList<String> questions, ArrayList<String> answers, int min_length, int max_length) {
 		this.questions = questions;
 		this.answers = answers;
 		this.min_length = min_length;
