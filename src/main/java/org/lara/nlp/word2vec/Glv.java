@@ -1,4 +1,4 @@
-package org.lara.nlp.dl4j;
+package org.lara.nlp.word2vec;
 
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.glove.Glove;
