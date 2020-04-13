@@ -9,6 +9,15 @@ abstract class Context {
 	public ArrayList<String> questions;
 	public ArrayList<String> answers;
 	public abstract void init();
+	// Limits
+	public Integer min_length;
+	public Integer max_length;
+
+	// Execute the cleaning
+	public void cleaning() {
+		Processer process = new Processer(questions, answers, min_length, max_length);
+		process.process();
+	}
 
 	// Save the questions and answers
 	public void save(String path_questions, String path_answers) throws Exception {
