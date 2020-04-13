@@ -1,4 +1,4 @@
-package org.lara.nlp;
+package org.lara.nlp.context;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
