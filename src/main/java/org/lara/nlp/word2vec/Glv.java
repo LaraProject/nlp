@@ -1,14 +1,18 @@
 package org.lara.nlp.word2vec;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.glove.Glove;
+import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.text.sentenceiterator.BasicLineIterator;
 import org.deeplearning4j.text.sentenceiterator.CollectionSentenceIterator;
 import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
-import java.util.ArrayList;
+import org.nd4j.linalg.factory.Nd4j;
 
 public class Glv {
 	// Structure
@@ -47,5 +51,19 @@ public class Glv {
 	// Export the model
 	public Glove getModel() {
 		return glove;
+	}
+
+	// Export embedding matrix to a numpy array
+	public void exportEmbedding(String export_path) throws Exception {
+		File export_file = new File(export_path);
+		Nd4j.writeAsNumpy(glove.lookupTable().getWeights(), export_file);
+	}
+
+	/// Export all words
+	public void exportWords(String export_path) throws Exception {
+		FileWriter words_file = new FileWriter(export_path);
+		for (VocabWord w : glove.vocab().vocabWords())
+			words_file.write(w.getWord() + "\n");
+		words_file.close();
 	}
 }

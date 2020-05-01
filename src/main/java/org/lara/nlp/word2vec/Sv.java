@@ -1,5 +1,8 @@
 package org.lara.nlp.word2vec;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import org.deeplearning4j.models.embeddings.WeightLookupTable;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
 import org.deeplearning4j.models.embeddings.learning.impl.elements.SkipGram;
@@ -7,8 +10,9 @@ import org.deeplearning4j.models.embeddings.loader.VectorsConfiguration;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.sequencevectors.SequenceVectors;
 import org.deeplearning4j.models.sequencevectors.iterators.AbstractSequenceIterator;
-import org.deeplearning4j.models.sequencevectors.transformers.impl.SentenceTransformer;
 import org.deeplearning4j.models.sequencevectors.serialization.VocabWordFactory;
+import org.deeplearning4j.models.sequencevectors.transformers.impl.SentenceTransformer;
+import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.wordstore.VocabConstructor;
 import org.deeplearning4j.models.word2vec.wordstore.inmemory.AbstractCache;
@@ -17,8 +21,7 @@ import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
-import java.util.ArrayList;
-import java.io.File;
+import org.nd4j.linalg.factory.Nd4j;
 
 public class Sv {
 	// Structure
@@ -92,5 +95,19 @@ public class Sv {
 	// Export the model
 	public SequenceVectors<VocabWord> getModel() {
 		return vectors;
+	}
+
+	// Export embedding matrix to a numpy array
+	public void exportEmbedding(String export_path) throws Exception  {
+		File export_file = new File(export_path);
+		Nd4j.writeAsNumpy(vectors.lookupTable().getWeights(), export_file);
+	}
+
+	/// Export all words
+	public void exportWords(String export_path) throws Exception {
+		FileWriter words_file = new FileWriter(export_path);
+		for (VocabWord w : vectors.vocab().vocabWords())
+			words_file.write(w.getWord() + "\n");
+		words_file.close();
 	}
 }
