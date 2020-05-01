@@ -2,18 +2,23 @@ package org.lara.nlp.context;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 class Processer {
 	// Structure
-	private ArrayList<String> questions;
-	private ArrayList<String> answers;
+	public ArrayList<String> questions;
+	public ArrayList<String> answers;
+	public Hashtable<String, String> dictionnary;
+
 	// Limits
 	private int min_length;
 	private int max_length;
 
-	public Processer(ArrayList<String> questions, ArrayList<String> answers, int min_length, int max_length) {
+	public Processer(ArrayList<String> questions, ArrayList<String> answers, Hashtable<String, String> dictionnary, int min_length, int max_length) {
 		this.questions = questions;
 		this.answers = answers;
+		this.dictionnary = dictionnary;
 		this.min_length = min_length;
 		this.max_length = max_length;
 	}
@@ -22,12 +27,7 @@ class Processer {
 	private static String clean_text(String orig) {
 		String text = orig.toLowerCase();
 		text = text.replaceAll("i'm", "i am");
-		text = text.replaceAll("he's", "he is");
-		text = text.replaceAll("she's", "she is");
-		text = text.replaceAll("that's", "that is");
-		text = text.replaceAll("what's", "what is");
-		text = text.replaceAll("where's", "where is");
-		text = text.replaceAll("how's", "how is");
+		text = text.replaceAll("\'s", " is");
 		text = text.replaceAll("\'ll", " will");
 		text = text.replaceAll("\'ve", " have");
 		text = text.replaceAll("\'re", " are");
@@ -35,7 +35,10 @@ class Processer {
 		text = text.replaceAll("n't", " not");
 		text = text.replaceAll("won't", "will not");
 		text = text.replaceAll("can't", "cannot");
-		//text = text.replaceAll("[-()\"#/@;:<>{}`+=~|.!?,]", "");
+		text = text.replaceAll("[^\\x00-\\x7F]", "");
+		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
+		text = text.replaceAll("\\p{C}", "");
+		text = text.replaceAll("[-()\"#/@;:<>{}`+=~|.!?,\']", "");
 		return text;
 	}
 
@@ -80,9 +83,20 @@ class Processer {
 		answers = clean_answers;
 	}
 
+	// Create the dictionnary
+	public void createDictionnary() {
+		dictionnary = new Hashtable<String, String>();
+		Iterator<String> it_questions = questions.iterator();
+		Iterator<String> it_answers = answers.iterator();
+		while (it_questions.hasNext() && it_answers.hasNext()) {
+			dictionnary.put(it_questions.next(),it_answers.next());
+		}
+	}
+
 	// Process everything
 	public void process() {
 		cleanQuestionsAnswers();
 		lengthFilter();
+		createDictionnary();
 	}
 }
