@@ -35,7 +35,7 @@ class Processer {
 		text = text.replaceAll("n't", " not");
 		text = text.replaceAll("won't", "will not");
 		text = text.replaceAll("can't", "cannot");
-		text = text.replaceAll("[-()\"#/@;:<>{}`+=~|.!?,]", "");
+		//text = text.replaceAll("[-()\"#/@;:<>{}`+=~|.!?,]", "");
 		return text;
 	}
 
