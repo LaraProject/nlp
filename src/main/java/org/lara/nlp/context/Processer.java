@@ -9,16 +9,14 @@ class Processer {
 	// Structure
 	public ArrayList<String> questions;
 	public ArrayList<String> answers;
-	public Hashtable<String, String> dictionnary;
 
 	// Limits
 	private int min_length;
 	private int max_length;
 
-	public Processer(ArrayList<String> questions, ArrayList<String> answers, Hashtable<String, String> dictionnary, int min_length, int max_length) {
+	public Processer(ArrayList<String> questions, ArrayList<String> answers, int min_length, int max_length) {
 		this.questions = questions;
 		this.answers = answers;
-		this.dictionnary = dictionnary;
 		this.min_length = min_length;
 		this.max_length = max_length;
 	}
@@ -38,7 +36,7 @@ class Processer {
 		text = text.replaceAll("[^\\x00-\\x7F]", "");
 		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
 		text = text.replaceAll("\\p{C}", "");
-		text = text.replaceAll("[-()\"#/@;:<>{}`+=~|.!?,\']", "");
+		// text = text.replaceAll("[-()\"#/@;:<>{}`+=~|.!?,\']", "");
 		return text;
 	}
 
@@ -55,7 +53,7 @@ class Processer {
 	}
 
 	// Filter out the questions and answers that are too short or too long
-	private void lengthFilter() {
+	public void lengthFilter() {
 		ArrayList<String> short_questions = new ArrayList<String> ();
 		ArrayList<String> short_answers = new ArrayList<String> ();
 		int i = 0;
@@ -83,20 +81,32 @@ class Processer {
 		answers = clean_answers;
 	}
 
-	// Create the dictionnary
-	public void createDictionnary() {
-		dictionnary = new Hashtable<String, String>();
-		Iterator<String> it_questions = questions.iterator();
-		Iterator<String> it_answers = answers.iterator();
-		while (it_questions.hasNext() && it_answers.hasNext()) {
-			dictionnary.put(it_questions.next(),it_answers.next());
+	// Tokenize
+	private String tokenize_sentence(String s) {
+		String ret = s;
+		int l = (s.split(" ")).length;
+		if (l < max_length) {
+			for (int i = 0; i < (max_length-l); i++) {
+				ret = ret + " _P_";
+			}
 		}
+		return "_B_ " + ret + " _E_";
+	}
+	private ArrayList<String> tokenize_set(ArrayList<String> set) {
+		ArrayList<String> ret = new ArrayList<String> ();
+		for (String s: set) {
+			ret.add(tokenize_sentence(s));
+		}
+		return ret;
+	}
+	private void tokenize() {
+		questions = tokenize_set(questions);
+		answers = tokenize_set(answers);
 	}
 
 	// Process everything
 	public void process() {
 		cleanQuestionsAnswers();
-		lengthFilter();
-		createDictionnary();
+		tokenize();
 	}
 }

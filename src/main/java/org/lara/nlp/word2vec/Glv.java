@@ -43,27 +43,8 @@ public class Glv {
 		WordVectorSerializer.writeWordVectors(glove, path);
 	}
 
-	// Get the cosine similarity
-	public double similarity(String word1, String word2) {
-		return glove.similarity(word1, word2);
-	}
-
 	// Export the model
 	public Glove getModel() {
 		return glove;
-	}
-
-	// Export embedding matrix to a numpy array
-	public void exportEmbedding(String export_path) throws Exception {
-		File export_file = new File(export_path);
-		Nd4j.writeAsNumpy(glove.lookupTable().getWeights(), export_file);
-	}
-
-	/// Export all words
-	public void exportWords(String export_path) throws Exception {
-		FileWriter words_file = new FileWriter(export_path);
-		for (VocabWord w : glove.vocab().vocabWords())
-			words_file.write(w.getWord() + "\n");
-		words_file.close();
 	}
 }

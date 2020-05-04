@@ -2,6 +2,8 @@ package org.lara.nlp.word2vec;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import org.deeplearning4j.models.embeddings.WeightLookupTable;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
@@ -73,13 +75,13 @@ public class Sv {
 
 	// Load the model
 	public Sv(String path) throws Exception {
-		vectors = WordVectorSerializer.readSequenceVectors(new VocabWordFactory(), new File(path));
-
+		vectors = WordVectorSerializer.readSequenceVectors(path, true);
 	}
 
 	// Save the model
 	public void save_model(String path) throws Exception {
-		WordVectorSerializer.writeSequenceVectors(vectors, new VocabWordFactory(), path);
+		OutputStream out_file = new FileOutputStream(path);
+		WordVectorSerializer.writeSequenceVectors(vectors, out_file);
 	}
 
 	// Write vectors
@@ -87,27 +89,8 @@ public class Sv {
 		save_model(path);
 	}
 
-	// Get the cosine similarity
-	public double similarity(String word1, String word2) {
-		return vectors.similarity(word1, word2);
-	}
-
 	// Export the model
 	public SequenceVectors<VocabWord> getModel() {
 		return vectors;
-	}
-
-	// Export embedding matrix to a numpy array
-	public void exportEmbedding(String export_path) throws Exception  {
-		File export_file = new File(export_path);
-		Nd4j.writeAsNumpy(vectors.lookupTable().getWeights(), export_file);
-	}
-
-	/// Export all words
-	public void exportWords(String export_path) throws Exception {
-		FileWriter words_file = new FileWriter(export_path);
-		for (VocabWord w : vectors.vocab().vocabWords())
-			words_file.write(w.getWord() + "\n");
-		words_file.close();
 	}
 }

@@ -52,12 +52,7 @@ public class W2v {
 
 	// Save the model
 	public void save_model(String path) throws Exception {
-		vec = WordVectorSerializer.readWord2VecModel(path);
-	}
-
-	// Get the cosine similarity
-	public double similarity(String word1, String word2) {
-		return vec.similarity(word1, word2);
+		WordVectorSerializer.writeWord2VecModel(vec, path);
 	}
 
 	// Export the model
@@ -65,17 +60,4 @@ public class W2v {
 		return vec;
 	}
 
-	// Export embedding matrix to a numpy array
-	public void exportEmbedding(String export_path) throws Exception {
-		File export_file = new File(export_path);
-		Nd4j.writeAsNumpy(vec.lookupTable().getWeights(), export_file);
-	}
-
-	/// Export all words
-	public void exportWords(String export_path) throws Exception {
-		FileWriter words_file = new FileWriter(export_path);
-		for (VocabWord w : vec.vocab().vocabWords())
-			words_file.write(w.getWord() + "\n");
-		words_file.close();
-	}
 }

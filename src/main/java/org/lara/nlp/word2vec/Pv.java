@@ -29,37 +29,23 @@ public class Pv {
 			.build();
 	}
 
+	// Load the model
+	public Pv(String path) throws Exception {
+		vectors = WordVectorSerializer.readParagraphVectors(path);
+	}
+
+	// Save model
+	public void save_model(String path) throws Exception {
+		write_vectors(path);
+	}
+
 	// Output to a file
 	public void write_vectors(String path) throws Exception {
 		WordVectorSerializer.writeParagraphVectors(vectors, path);
 	}
 
-	// Convert a sentence to a vector
-	public INDArray sentence2vector(String sentence) {
-		return vectors.inferVector(sentence);
-	}
-
-	// Get the cosine similarity
-	public double similarity(String sentence1, String sentence2) {
-		return Transforms.cosineSim(sentence2vector(sentence1), sentence2vector(sentence2));
-	}
-
 	// Export the model
 	public ParagraphVectors getModel() {
 		return vectors;
-	}
-
-	// Export embedding matrix to a numpy array
-	public void exportEmbedding(String export_path) throws Exception {
-		File export_file = new File(export_path);
-		Nd4j.writeAsNumpy(vectors.lookupTable().getWeights(), export_file);
-	}
-
-	/// Export all words
-	public void exportWords(String export_path) throws Exception {
-		FileWriter words_file = new FileWriter(export_path);
-		for (VocabWord w : vectors.vocab().vocabWords())
-			words_file.write(w.getWord() + "\n");
-		words_file.close();
 	}
 }

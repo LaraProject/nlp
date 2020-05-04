@@ -10,20 +10,25 @@ import java.util.Iterator;
 public abstract class Context {
 	public ArrayList<String> questions;
 	public ArrayList<String> answers;
-	public Hashtable<String, String> dictionnary;
+	private Processer process;
 
 	public abstract void init();
 	// Limits
 	public int min_length;
 	public int max_length;
 
+	// Filter by length
+	public void lengthFilter() {
+		process = new Processer(questions, answers, min_length, max_length);
+		process.lengthFilter();
+		this.questions = process.questions;
+		this.answers = process.answers;
+	}
 	// Execute the cleaning
 	public void cleaning() {
-		Processer process = new Processer(questions, answers, dictionnary, min_length, max_length);
 		process.process();
 		this.questions = process.questions;
 		this.answers = process.answers;
-		this.dictionnary = process.dictionnary;
 	}
 
 	// Save the questions and answers
@@ -68,17 +73,15 @@ public abstract class Context {
 		}
 	}
 
-	// Export the dictionnary to python
-	public void exportDictionnary(String script_path) throws Exception {
+	// Output the data in clean form
+	public void exportData(String path) throws Exception {
+		FileWriter file_out = new FileWriter(path);
 		Iterator<String> it_questions = questions.iterator();
 		Iterator<String> it_answers = answers.iterator();
-		FileWriter write_script = new FileWriter(script_path);
-		write_script.write("import numpy as np\n");
-		write_script.write("dict = {}\n");
-		while (it_questions.hasNext() && it_answers.hasNext()) {
-			write_script.write("dict['" + it_questions.next() + "'] = '" + it_answers.next() + "'\n");
+		while (it_questions.hasNext()) {
+			file_out.write("Question : " + it_questions.next() + "\n");
+			file_out.write("Answer : " + it_answers.next() + "\n");
 		}
-		write_script.write("np.save('conversationDictionary.npy', dict)\n");
-		write_script.close();
-	}	
+		file_out.close();
+	}
 }
