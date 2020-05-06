@@ -25,7 +25,16 @@ class Processer {
 	private static String clean_text(String orig) {
 		String text = orig.toLowerCase();
 		text = text.replaceAll("i'm", "i am");
-		text = text.replaceAll("\'s", " is");
+		text = text.replaceAll("he's", "he is");
+		text = text.replaceAll("she's", "she is");
+		text = text.replaceAll("that's", "that is");
+		text = text.replaceAll("what's", "what is");
+		text = text.replaceAll("where's", "where is");
+		text = text.replaceAll("how's", "how is");
+		text = text.replaceAll("who's", "who is");
+		text = text.replaceAll("here's", "here is");
+		text = text.replaceAll("it's", "it is");
+		text = text.replaceAll("there's", "there is");
 		text = text.replaceAll("\'ll", " will");
 		text = text.replaceAll("\'ve", " have");
 		text = text.replaceAll("\'re", " are");
@@ -33,10 +42,16 @@ class Processer {
 		text = text.replaceAll("n't", " not");
 		text = text.replaceAll("won't", "will not");
 		text = text.replaceAll("can't", "cannot");
+		text = text.replaceAll("<u>","");
+		text = text.replaceAll("</u>", "");
+		text = text.replaceAll("<i>","");
+		text = text.replaceAll("</i>", "");
+		text = text.replaceAll("<b>","");
+		text = text.replaceAll("</b>", "");
 		text = text.replaceAll("[^\\x00-\\x7F]", "");
 		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
 		text = text.replaceAll("\\p{C}", "");
-		// text = text.replaceAll("[-()\"#/@;:<>{}`+=~|.!?,\']", "");
+		text = text.replaceAll("[-()\"#/@;:<>{}`+=~|.!?,\']", "");
 		return text;
 	}
 
@@ -53,7 +68,7 @@ class Processer {
 	}
 
 	// Filter out the questions and answers that are too short or too long
-	public void lengthFilter() {
+	private void lengthFilter() {
 		ArrayList<String> short_questions = new ArrayList<String> ();
 		ArrayList<String> short_answers = new ArrayList<String> ();
 		int i = 0;
@@ -87,10 +102,10 @@ class Processer {
 		int l = (s.split(" ")).length;
 		if (l < max_length) {
 			for (int i = 0; i < (max_length-l); i++) {
-				ret = ret + " _P_";
+				ret = ret + " <PAD>";
 			}
 		}
-		return "_B_ " + ret + " _E_";
+		return "<START> " + ret + " <END>";
 	}
 	private ArrayList<String> tokenize_set(ArrayList<String> set) {
 		ArrayList<String> ret = new ArrayList<String> ();
@@ -99,7 +114,7 @@ class Processer {
 		}
 		return ret;
 	}
-	private void tokenize() {
+	public void tokenize() {
 		questions = tokenize_set(questions);
 		answers = tokenize_set(answers);
 	}
@@ -107,6 +122,6 @@ class Processer {
 	// Process everything
 	public void process() {
 		cleanQuestionsAnswers();
-		tokenize();
+		lengthFilter();
 	}
 }

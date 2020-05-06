@@ -18,14 +18,14 @@ public abstract class Context {
 	public int max_length;
 
 	// Filter by length
-	public void lengthFilter() {
-		process = new Processer(questions, answers, min_length, max_length);
-		process.lengthFilter();
+	public void tokenize() {
+		process.tokenize();
 		this.questions = process.questions;
 		this.answers = process.answers;
 	}
 	// Execute the cleaning
 	public void cleaning() {
+		process = new Processer(questions, answers, min_length, max_length);
 		process.process();
 		this.questions = process.questions;
 		this.answers = process.answers;
