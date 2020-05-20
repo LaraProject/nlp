@@ -48,10 +48,9 @@ class Processer {
 		text = text.replaceAll("</i>", "");
 		text = text.replaceAll("<b>","");
 		text = text.replaceAll("</b>", "");
-		text = text.replaceAll("[^\\x00-\\x7F]", "");
-		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
-		text = text.replaceAll("\\p{C}", "");
-		text = text.replaceAll("[-()\"#/@;:<>{}`+=~|.!?,\']", "");
+		text = text.replaceAll("[\"#$%&()*+,-./:;<=>[\\@]^_`{|}~]", "");
+		text = text.replaceAll("\\r\\n|\\r|\\n", " ");
+		//text = text.replaceAll("[^a-zA-Z ]", "")
 		return text;
 	}
 
@@ -67,44 +66,34 @@ class Processer {
 		answers = clean_answers;
 	}
 
+	// Check length of a string
+	private boolean checkLength(String str) {
+		int l = str.length();
+		return ((min_length <= l) && (l <= max_length));
+	}
+
 	// Filter out the questions and answers that are too short or too long
 	private void lengthFilter() {
 		ArrayList<String> short_questions = new ArrayList<String> ();
 		ArrayList<String> short_answers = new ArrayList<String> ();
-		int i = 0;
-		int l = 0;
-		for (String q: questions) {
-			l = (q.split(" ")).length;
-			if ((min_length <= l) && (l <= max_length)) {
-				short_questions.add(q);
-				short_answers.add(answers.get(i));
+		Iterator<String> it_questions = questions.iterator();
+		Iterator<String> it_answers = answers.iterator();
+		while (it_questions.hasNext() && it_answers.hasNext()) {
+			String question = it_questions.next();
+			String answer = it_answers.next();
+			if (checkLength(question) && checkLength(answer)) {
+				short_questions.add(question);
+				short_answers.add(answer);
 			}
-			i++;
 		}
-		ArrayList<String> clean_questions = new ArrayList<String> ();
-		ArrayList<String> clean_answers = new ArrayList<String> ();
-		i = 0;
-		for (String a: short_answers) {
-			l = (a.split(" ")).length;
-			if ((min_length <= l) && (l <= max_length)) {
-				clean_answers.add(a);
-				clean_questions.add(short_questions.get(i));
-			}
-			i++;
-		}
-		questions = clean_questions;
-		answers = clean_answers;
+		questions = short_questions;
+		answers = short_answers;
 	}
 
 	// Tokenize
 	private String tokenize_sentence(String s) {
 		String ret = s;
 		int l = (s.split(" ")).length;
-		if (l < max_length) {
-			for (int i = 0; i < (max_length-l); i++) {
-				ret = ret + " <PAD>";
-			}
-		}
 		return "<START> " + ret + " <END>";
 	}
 	private ArrayList<String> tokenize_set(ArrayList<String> set) {
@@ -121,7 +110,7 @@ class Processer {
 
 	// Process everything
 	public void process() {
-		cleanQuestionsAnswers();
 		lengthFilter();
+		cleanQuestionsAnswers();
 	}
 }
