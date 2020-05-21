@@ -5,15 +5,17 @@ import org.lara.nlp.context.Simple;
 class SimpleTest {
 	public static void main(String[] args) throws Exception {
 		// Simple data
-		Simple context = new Simple(args[0], 5, 99999);
+		int min_length = Integer.parseInt(args[1]);
+		int max_length = Integer.parseInt(args[2]);
+		Simple context = new Simple(args[0], min_length, max_length);
 		System.out.println("SimpleTest: filename = " + args[0]);
-		System.out.println("SimpleTest: min_length = 5 | max_length = 99999");
+		System.out.println("SimpleTest: min_length = 0 | max_length = 40");
 		System.out.println("SimpleTest: initializing...");
 		context.init();
 		System.out.println("SimpleTest: cleaning text...");
 		context.cleaning();
 		// Export before cleaning
-		System.out.println("SimpleTest: exporting to " + args[1]);
-		context.exportData(args[1]);
+		System.out.println("SimpleTest: exporting to " + args[3]);
+		context.exportData(args[3]);
 	}
 }
