@@ -1,0 +1,42 @@
+diff --git a/pom.xml b/pom.xml
+index 0793b53..05816cc 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -10,7 +10,7 @@
+     <properties>
+         <nd4j.version>1.0.0-beta7</nd4j.version>
+         <dl4j.version>1.0.0-beta7</dl4j.version>
+-        <nd4j.backend>nd4j-native-platform</nd4j.backend>
++        <nd4j.backend>nd4j-cuda-10.1-platform</nd4j.backend>
+         <shadedClassifier>bin</shadedClassifier>
+         <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+@@ -66,6 +66,11 @@
+             <artifactId>deeplearning4j-nlp</artifactId>
+             <version>${dl4j.version}</version>
+         </dependency>
++        <dependency>
++                <groupId>org.deeplearning4j</groupId>
++                <artifactId>deeplearning4j-cuda-10.1</artifactId>
++                <version>${dl4j.version}</version>
++        </dependency>
+         <dependency>
+             <groupId>org.slf4j</groupId>
+             <artifactId>slf4j-api</artifactId>
+diff --git a/src/main/java/org/lara/nlp/word2vec/W2v.java b/src/main/java/org/lara/nlp/word2vec/W2v.java
+index 12753a3..e884dfa 100644
+--- a/src/main/java/org/lara/nlp/word2vec/W2v.java
++++ b/src/main/java/org/lara/nlp/word2vec/W2v.java
+@@ -33,10 +33,12 @@ public class W2v {
+ 			.epochs(epochs)
+ 			.layerSize(dimension) // the number of features in the word vector
+ 			.learningRate(learningRate)
++			.minLearningRate(0.001)
+ 			.seed(40)
+ 			.windowSize(5) // rolling skip gram window size
+ 			.iterate(iter) // the input sentences
+ 			.tokenizerFactory(t) // the tokenizer
++			.batchSize(1024)
+ 			.build();
+ 		vec.fit();
+ 	}
