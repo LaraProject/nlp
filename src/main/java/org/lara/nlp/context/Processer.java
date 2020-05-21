@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import com.vdurmont.emoji.EmojiParser;
 
 class Processer {
 	// Structure
@@ -22,8 +23,7 @@ class Processer {
 	}
 
 	// Simplifying and cleaning the text using regex
-	private static String clean_text(String orig) {
-		String text = orig.toLowerCase();
+	private static String clean_english(String text) {
 		text = text.replaceAll("i'm", "i am");
 		text = text.replaceAll("he's", "he is");
 		text = text.replaceAll("she's", "she is");
@@ -42,14 +42,38 @@ class Processer {
 		text = text.replaceAll("n't", " not");
 		text = text.replaceAll("won't", "will not");
 		text = text.replaceAll("can't", "cannot");
+		return text;
+	}
+	private static String clean_html(String text) {
 		text = text.replaceAll("<u>","");
 		text = text.replaceAll("</u>", "");
 		text = text.replaceAll("<i>","");
 		text = text.replaceAll("</i>", "");
 		text = text.replaceAll("<b>","");
 		text = text.replaceAll("</b>", "");
-		text = text.replaceAll("[\"#$%&()*+,-./:;<=>[\\@]^_`{|}~]", "");
+		return text;
+	}
+	private static String clean_emoji(String text) {
+		text = EmojiParser.parseToAliases(text);
+		text = text.replaceAll(":-\\)",":smile:");
+		text = text.replaceAll(":-D",":happy:");
+		text = text.replaceAll(":-P",":joke:");
+		return EmojiParser.parseToAliases(text);
+	}
+	private static String clean_text(String orig) {
+		// Convert to lower case
+		String text = orig.toLowerCase();
+		// Clean english
+		//text = clean_english(text);
+		// Remove HTML code
+		text = clean_html(text);
+		// Clean emojis
+		text = clean_emoji(text);
+		// Remove punctuation (except <, >, ? and !)
+		text = text.replaceAll("[\"#$%&\\(\\)\\*\\+,-./;=\\[\\@\\]\\^_`\\{|\\}~]", "");
+		// Remove line terminators
 		text = text.replaceAll("\\r\\n|\\r|\\n", " ");
+		// Remove non-letters
 		//text = text.replaceAll("[^a-zA-Z ]", "")
 		return text;
 	}
