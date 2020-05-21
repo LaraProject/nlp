@@ -58,10 +58,18 @@ class Processer {
 	private void cleanQuestionsAnswers() {
 		ArrayList<String> clean_questions = new ArrayList<String> ();
 		ArrayList<String> clean_answers = new ArrayList<String> ();
-		for (String q: questions)
-			clean_questions.add(clean_text(q));
-		for (String a: answers)
-			clean_answers.add(clean_text(a));
+		Iterator<String> it_questions = questions.iterator();
+		Iterator<String> it_answers = answers.iterator();
+		while (it_questions.hasNext() && it_answers.hasNext()) {
+			String question = it_questions.next();
+			String answer = it_answers.next();
+			String clean_question = clean_text(question);
+			String clean_answer = clean_text(answer);
+			if ((clean_question.replaceAll(" ","").length() > 0) && (clean_answer.replaceAll(" ","").length() > 0)) {
+				clean_questions.add(clean_question);
+				clean_answers.add(clean_answer);
+			}
+		}
 		questions = clean_questions;
 		answers = clean_answers;
 	}
