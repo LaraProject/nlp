@@ -27,7 +27,7 @@ class W2vTest {
 		allWords.add("<UNK>");
 		allWords.add("<UNK>");
 		System.out.println("W2vTest: creating the W2v object...");
-		W2v w2v = new W2v(allWords, 5, 5, 3, 300, 0.025);
+		W2v w2v = new W2v(allWords, 5, 5, 5, 100);
 		System.out.println("W2vTest: export W2v model to " + args[2]);
 		w2v.write_vectors(args[2]);
 	}	
