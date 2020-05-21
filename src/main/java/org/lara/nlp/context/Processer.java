@@ -68,7 +68,7 @@ class Processer {
 
 	// Check length of a string
 	private boolean checkLength(String str) {
-		int l = str.length();
+		int l = (str.split(" ")).length;
 		return ((min_length <= l) && (l <= max_length));
 	}
 
