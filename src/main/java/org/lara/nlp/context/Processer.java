@@ -93,7 +93,6 @@ class Processer {
 	// Tokenize
 	private String tokenize_sentence(String s) {
 		String ret = s;
-		int l = (s.split(" ")).length;
 		return "<START> " + ret + " <END>";
 	}
 	private ArrayList<String> tokenize_set(ArrayList<String> set) {
