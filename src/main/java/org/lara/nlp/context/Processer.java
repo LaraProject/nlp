@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import com.vdurmont.emoji.EmojiParser;
+import emoji4j.EmojiUtils;
 
 class Processer {
 	// Structure
@@ -54,23 +54,23 @@ class Processer {
 		return text;
 	}
 	private static String clean_emoji(String text) {
-		text = EmojiParser.parseToAliases(text);
-		text = text.replaceAll(":-\\)",":smile:");
-		text = text.replaceAll(":-D",":happy:");
-		text = text.replaceAll(":-P",":joke:");
-		return EmojiParser.parseToAliases(text);
+		return EmojiUtils.shortCodify(text);
 	}
 	private static String clean_text(String orig) {
 		// Convert to lower case
 		String text = orig.toLowerCase();
+		// Remove URLs
+		text = text.replaceAll("http?://\\S+\\s?", "");
+		text = text.replaceAll("https?://\\S+\\s?", "");
 		// Clean english
 		//text = clean_english(text);
 		// Remove HTML code
 		text = clean_html(text);
 		// Clean emojis
 		text = clean_emoji(text);
-		// Remove punctuation (except <, >, ? and !)
-		text = text.replaceAll("[\"#$%&\\(\\)\\*\\+,-./;=\\[\\@\\]\\^_`\\{|\\}~]", "");
+		// Remove punctuation (except <, >, ?, !, : and ^)
+		text = text.replaceAll("[\"#$%&\\(\\)\\*\\+,-./;=\\[\\@\\]\\_`\\{|\\}~]", "");
+		text = text.replaceAll(" : "," ");
 		// Remove line terminators
 		text = text.replaceAll("\\r\\n|\\r|\\n", " ");
 		// Remove non-letters
