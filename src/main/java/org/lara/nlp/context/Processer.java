@@ -68,9 +68,13 @@ class Processer {
 		text = clean_html(text);
 		// Clean emojis
 		text = clean_emoji(text);
-		// Remove punctuation (except <, >, ?, !, : and ^)
-		text = text.replaceAll("[\"#$%&\\(\\)\\*\\+,-./;=\\[\\@\\]\\_`\\{|\\}~]", "");
-		text = text.replaceAll(" : "," ");
+		// Remove punctuation
+		text = text.replaceAll("[\\p{Punct}]&&[^'?!:^-]", "");
+		text = text.replaceAll("\\^\\^", ":eyebrows:");
+		text = text.replaceAll("([\\p{IsLatin}]*+):++([\\p{IsLatin}]++):++([\\p{IsLatin}]*+)", "$1 #" + "$2" + "# $3");
+		text = text.replaceAll("([\\p{IsLatin}]*+)([?!]++)([\\p{IsLatin}]*+)", "$1 $2 $3");
+		text = text.replaceAll("([\\p{IsLatin}]*+)[:^-]++([\\p{IsLatin}]*+)", "$1 $2");
+		text = text.replaceAll("#",":");
 		// Remove line terminators
 		text = text.replaceAll("\\r\\n|\\r|\\n", " ");
 		// Remove non-letters
