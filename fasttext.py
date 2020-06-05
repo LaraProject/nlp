@@ -15,7 +15,7 @@ class MyIter(object):
         yield sentence
         count += 1
 
-def train(aSize, aWindow, aMin_count, aWorkers, aEpochs, path)
+def train(aSize, aWindow, aMin_count, aWorkers, aEpochs, path):
   model = FastText(size=aSize, window=aWindow, min_count=aMin_count, workers=aWorkers)
   model.build_vocab(sentences=MyIter())
   total_examples = model.corpus_count
@@ -23,7 +23,7 @@ def train(aSize, aWindow, aMin_count, aWorkers, aEpochs, path)
   model.wv.save_word2vec_format(path)
 
 # Argument management
-argslist = argparse.ArgumentParser(description="Seq2Seq Neural Network")
+argslist = argparse.ArgumentParser(description="FastText Word Vectors")
 
 argslist.add_argument('data', metavar='facebook_data', type=str,
     help='Path to the data')
@@ -39,10 +39,7 @@ argslist.add_argument('--minCount', metavar='count', type=int,
 argslist.add_argument('--workers', metavar='num', type=int,
     help='Specify the number of threads dedicated to the training', default=2, required=False)
 
-argslist.add_argument('--epochs', metavar='num', type=int,
-    help='Specify the size of the word vectors', default=100, required=False)
-
-argslist.add_argument('--size', metavar='size', type=int,
+argslist.add_argument('--epochs', metavar='size', type=int,
     help='Specify the number of epochs for the algorithm', default=5, required=False)
 
 argslist.add_argument('--path', metavar='path', type=str,
