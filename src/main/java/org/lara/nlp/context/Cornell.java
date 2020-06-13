@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.ArrayList;
+import org.apache.commons.cli.*;
 
 public class Cornell extends Context {
 	// Structure
@@ -80,4 +81,70 @@ public class Cornell extends Context {
 			}
 		}
 	}
+
+    // Get context from command line arguments
+    public static Options getOptions() {
+
+        Option linesFileOption = Option.builder("lines_file") 
+                .desc("Specify the path to the lines file") 
+                .hasArg(true) 
+                .argName("path") 
+                .required(true) 
+                .build();
+        Option conversationsOption = Option.builder("conversations_file") 
+                .desc("Specify the path to the conversations file") 
+                .hasArg(true) 
+                .argName("path") 
+                .required(true) 
+                .build();
+        Option minLengthOption = Option.builder("min_length") 
+                .desc("Minimum length of the sentences") 
+                .hasArg(true) 
+                .argName("size") 
+                .required(false) 
+                .build();
+        Option maxLengthOption = Option.builder("max_length") 
+                .desc("Maximum length of the sentences") 
+                .hasArg(true) 
+                .argName("size") 
+                .required(false) 
+                .build();
+
+        Options options = new Options();
+        options.addOption(linesFileOption);
+        options.addOption(conversationsOption);
+        options.addOption(minLengthOption);
+        options.addOption(maxLengthOption);
+
+        return options;
+    }
+
+    public Cornell(Options options, String[] args) throws ParseException {
+
+        CommandLineParser parser = new DefaultParser();
+        CommandLine line = parser.parse(options, args);
+
+        String lines_filename = line.getOptionValue("lines_file");
+        String conversations_filename = line.getOptionValue("conversations_file");
+
+        String min_length_str = line.getOptionValue("min_length", "5");
+        int min_length = 5;
+        try {
+            min_length =  Integer.valueOf(min_length_str);
+        } catch (Exception e) {
+            System.err.println("Bad parameter: min_length");
+            System.exit(3);
+        }
+
+        String max_length_str = line.getOptionValue("max_length", "30");
+        int max_length = 30;
+        try {
+            max_length =  Integer.valueOf(max_length_str);
+        } catch (Exception e) {
+            System.err.println("Bad parameter: max_length");
+            System.exit(3);
+        }
+
+        new Cornell(lines_filename, conversations_filename, min_length, max_length);
+    }
 }

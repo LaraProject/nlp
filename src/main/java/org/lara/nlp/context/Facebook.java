@@ -12,6 +12,8 @@ import org.json.simple.parser.ParseException;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import org.apache.commons.cli.*;
+
 public class Facebook extends Context {
 	// Structure
 	String answerer;
@@ -40,7 +42,7 @@ public class Facebook extends Context {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (org.json.simple.parser.ParseException e) {
 			e.printStackTrace();
 		}
     }
@@ -78,5 +80,70 @@ public class Facebook extends Context {
     // Parse everything
     public void init() {
     	conversation.forEach(message -> parseMessage((JSONObject) message));
+    }
+
+    // Get context from command line arguments
+    public static Options getOptions() {
+
+        Option jsonOption = Option.builder("fb_json") 
+                .desc("Specify the JSON source file") 
+                .hasArg(true) 
+                .argName("path") 
+                .required(true) 
+                .build();
+        Option answererOption = Option.builder("answerer") 
+                .desc("Specify the first name and the name of the person answering the questions") 
+                .hasArg(true) 
+                .argName("name") 
+                .required(true) 
+                .build();
+        Option minLengthOption = Option.builder("min_length") 
+                .desc("Minimum length of the sentences") 
+                .hasArg(true) 
+                .argName("size") 
+                .required(false) 
+                .build();
+        Option maxLengthOption = Option.builder("max_length") 
+                .desc("Maximum length of the sentences") 
+                .hasArg(true) 
+                .argName("size") 
+                .required(false) 
+                .build();
+
+        Options options = new Options();
+        options.addOption(jsonOption);
+        options.addOption(answererOption);
+        options.addOption(minLengthOption);
+        options.addOption(maxLengthOption);
+
+        return options;
+    }
+
+    public Facebook(Options options, String[] args) throws org.apache.commons.cli.ParseException {
+        CommandLineParser parser = new DefaultParser();
+        CommandLine line = parser.parse(options, args);
+
+        String json_filename = line.getOptionValue("fb_json");
+        String answerer = line.getOptionValue("answerer");
+
+        String min_length_str = line.getOptionValue("min_length", "0");
+        int min_length = 0;
+        try {
+            min_length =  Integer.valueOf(min_length_str);
+        } catch (Exception e) {
+            System.err.println("Bad parameter: min_length");
+            System.exit(3);
+        }
+
+        String max_length_str = line.getOptionValue("max_length", "40");
+        int max_length = 40;
+        try {
+            max_length =  Integer.valueOf(max_length_str);
+        } catch (Exception e) {
+            System.err.println("Bad parameter: max_length");
+            System.exit(3);
+        }
+
+        new Facebook(json_filename, answerer, min_length, max_length);
     }
 }
