@@ -20,6 +20,11 @@ class W2vSimpleTest {
                 .required(true) 
                 .build();
         options.addOption(exportPathOption);
+		Option customIteratorOption = Option.builder("useCustomIterator") 
+				.desc("Use SimpleLineIterator custom iterator") 
+				.required(false) 
+				.build();
+		options.addOption(exportPathOption);
 
         // Help function
 		Option helpFileOption = Option.builder("h") 
@@ -41,6 +46,7 @@ class W2vSimpleTest {
         CommandLine line = parser.parse(options, args);
         String export_path = line.getOptionValue("export");
         String input_path = line.getOptionValue("conversations_file");
+        boolean useCustomIterator = line.hasOption("useCustomIterator");
 		String minWordFrequency_str = line.getOptionValue("minWordFrequency", "20");
 		int minWordFrequency = 20;
 		try {
@@ -51,24 +57,31 @@ class W2vSimpleTest {
 		}
 
 		// Cornell data
-		Simple context = new Simple(options, args);
-		System.out.println("W2vSimpleTest: initializing from " + input_path + " ...");
-		context.init();
-		System.out.println("W2vSimpleTest: cleaning text...");
-		context.cleaning();
-		System.out.println("W2vSimpleTest: tokenizing...");
-		context.tokenize();
+		if (!useCustomIterator) {
+			Simple context = new Simple(options, args);
+			System.out.println("W2vSimpleTest: initializing from " + input_path + " ...");
+			context.init();
+			System.out.println("W2vSimpleTest: cleaning text...");
+			context.cleaning();
+			System.out.println("W2vSimpleTest: tokenizing...");
+			context.tokenize();
 
-		// Word2Vec
-		ArrayList<String> allWords = new ArrayList<String>();
-		allWords.addAll(context.questions);
-		allWords.addAll(context.answers);
-		for (int i = 0; i < (minWordFrequency*2); i++) {
-			allWords.add("<UNK>");
+			// Word2Vec
+			ArrayList<String> allWords = new ArrayList<String>();
+			allWords.addAll(context.questions);
+			allWords.addAll(context.answers);
+			for (int i = 0; i < (minWordFrequency*2); i++) {
+				allWords.add("<UNK>");
+			}
+			System.out.println("W2vSimpleTest: creating the W2v object...");
+			W2v w2v = new W2v(allWords, options, args);
+			System.out.println("W2vSimpleTest: export W2v model to " + export_path);
+			w2v.write_vectors(export_path);
+		} else {
+			System.out.println("W2vSimpleTest: creating the W2v object...");
+			W2v w2v = new W2v(input_path, options, args);
+			System.out.println("W2vSimpleTest: export W2v model to " + export_path);
+			w2v.write_vectors(export_path);
 		}
-		System.out.println("W2vSimpleTest: creating the W2v object...");
-		W2v w2v = new W2v(allWords, options, args);
-		System.out.println("W2vSimpleTest: export W2v model to " + export_path);
-		w2v.write_vectors(export_path);
 	}	
 }

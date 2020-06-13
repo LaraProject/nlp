@@ -15,18 +15,48 @@ import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFac
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 import org.nd4j.linalg.factory.Nd4j;
 import org.apache.commons.cli.*;
+import org.lara.nlp.context.SimpleLineIterator;
+import org.lara.nlp.context.SimplePreProcessor;
 
 public class W2v {
 	// Structure
 	private Word2Vec vec;
+	// Parameters
+	int minWordFrequency = 20;
+	int dimension = 100;
+	int window_size = 5;
+	int epochs = 5;
+	int iterations = 5;
+	int workers = 2;
+	int batch_size = 512;
 
 	// Constructor
 	public W2v(ArrayList<String> words, int minWordFrequency, int iterations, int epochs, int dimension, int workers, int batch_size, int window_size) {
 		// Iterator
 		SentenceIterator iter = new CollectionSentenceIterator(words);
+		new W2v(iter, minWordFrequency, iterations, epochs, dimension, workers, batch_size, window_size);
+	}
+
+	public W2v(String input_path, int minWordFrequency, int iterations, int epochs, int dimension, int workers, int batch_size, int window_size) throws Exception {
+		// Iterator
+		SentenceIterator iter = new SimpleLineIterator(input_path);
+		iter.setPreProcessor(new SimplePreProcessor());
+		new W2v(iter, minWordFrequency, iterations, epochs, dimension, workers, batch_size, window_size);
+	}
+
+	public W2v(SentenceIterator iter, int minWordFrequency, int iterations, int epochs, int dimension, int workers, int batch_size, int window_size) {
 		// Split on white spaces in the line to get words
 		TokenizerFactory t = new DefaultTokenizerFactory();
 		t.setTokenPreProcessor(new CommonPreprocessor());
+		// Set parameters
+		this.minWordFrequency = minWordFrequency;
+		this.dimension = dimension;
+		this.window_size = window_size;
+		this.epochs = epochs;
+		this.iterations = iterations;
+		this.workers = workers;
+		this.batch_size = batch_size;
+		// Build NN
 		vec = new Word2Vec.Builder()
 			.minWordFrequency(minWordFrequency) // exclude words we can't build an accurate context for
 			.iterations(iterations)
@@ -108,6 +138,10 @@ public class W2v {
 				.argName("num") 
 				.required(false)
 				.build();
+		Option simpleIteratorOption = Option.builder("useCustomIterator") 
+				.desc("Use custom SimpleLineIterator iterator") 
+				.required(false)
+				.build();
 
 		Options options = new Options();
 		options.addOption(minWordFrequencyOption);
@@ -117,17 +151,17 @@ public class W2v {
 		options.addOption(iterationsOption);
 		options.addOption(workersOption);
 		options.addOption(batchSizeOption);
+		options.addOption(simpleIteratorOption);
 
 		return options;
 	}
 
-	public W2v(ArrayList<String> words, Options options, String[] args) throws ParseException {
+	public void parse(Options options, String[] args)  throws ParseException {
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine line = parser.parse(options, args);
 
 		String minWordFrequency_str = line.getOptionValue("minWordFrequency", "20");
-		int minWordFrequency = 20;
 		try {
 			minWordFrequency =  Integer.valueOf(minWordFrequency_str);
 		} catch (Exception e) {
@@ -136,7 +170,6 @@ public class W2v {
 		}
 
 		String dimension_str = line.getOptionValue("dimension", "100");
-		int dimension = 100;
 		try {
 			dimension =  Integer.valueOf(dimension_str);
 		} catch (Exception e) {
@@ -145,7 +178,6 @@ public class W2v {
 		}
 
 		String window_size_str = line.getOptionValue("window_size", "5");
-		int window_size = 5;
 		try {
 			window_size =  Integer.valueOf(window_size_str);
 		} catch (Exception e) {
@@ -155,7 +187,6 @@ public class W2v {
 
 
 		String epochs_str = line.getOptionValue("epochs", "5");
-		int epochs = 5;
 		try {
 			epochs =  Integer.valueOf(epochs_str);
 		} catch (Exception e) {
@@ -164,7 +195,6 @@ public class W2v {
 		}
 
 		String iterations_str = line.getOptionValue("iterations", "5");
-		int iterations = 5;
 		try {
 			iterations =  Integer.valueOf(iterations_str);
 		} catch (Exception e) {
@@ -173,7 +203,6 @@ public class W2v {
 		}
 
 		String workers_str = line.getOptionValue("workers", "2");
-		int workers = 2;
 		try {
 			workers =  Integer.valueOf(workers_str);
 		} catch (Exception e) {
@@ -182,15 +211,21 @@ public class W2v {
 		}
 
 		String batch_size_str = line.getOptionValue("batch_size", "512");
-		int batch_size = 512;
 		try {
 			batch_size =  Integer.valueOf(batch_size_str);
 		} catch (Exception e) {
 			System.err.println("Bad parameter: batch_size");
 			System.exit(3);
 		}
+	}
 
+	public W2v(ArrayList<String> words, Options options, String[] args) throws ParseException {
+		parse(options, args);
 		new W2v(words, minWordFrequency, iterations, epochs, dimension, workers, batch_size, window_size);
 	}
 
+	public W2v(String input_path, Options options, String[] args) throws Exception {
+		parse(options, args);
+		new W2v(input_path, minWordFrequency, iterations, epochs, dimension, workers, batch_size, window_size);
+	}
 }
