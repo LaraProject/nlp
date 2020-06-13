@@ -74,13 +74,17 @@ public abstract class Context {
 	}
 
 	// Output the data in clean form
-	public void exportData(String path) throws Exception {
+	public void exportData(String path, int nb_unk) throws Exception {
 		FileWriter file_out = new FileWriter(path);
 		Iterator<String> it_questions = questions.iterator();
 		Iterator<String> it_answers = answers.iterator();
 		while (it_questions.hasNext()) {
 			file_out.write("Question : " + it_questions.next() + "\n");
 			file_out.write("Answer : " + it_answers.next() + "\n");
+		}
+		for (int i = 0; i < nb_unk; i++) {
+			file_out.write("Question : <unk> \n");
+			file_out.write("Answer : <unk> \n");
 		}
 		file_out.close();
 	}

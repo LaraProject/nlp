@@ -14,6 +14,13 @@ class FacebookTest {
                 .required(true) 
                 .build();
         options.addOption(exportPathOption);
+		Option unkOption = Option.builder("add_unk") 
+                .desc("Number of unknown tokens to add") 
+                .hasArg(true) 
+                .argName("num") 
+                .required(false) 
+                .build();
+        options.addOption(unkOption);
 
         // Help function
 		Option helpFileOption = Option.builder("h") 
@@ -35,6 +42,14 @@ class FacebookTest {
         CommandLine line = parser.parse(options, args);
         String export_path = line.getOptionValue("export");
         String input_path = line.getOptionValue("fb_json");
+        String add_unk_str = line.getOptionValue("add_unk", "0");
+        int add_unk = 0;
+        try {
+            add_unk =  Integer.valueOf(add_unk_str);
+        } catch (Exception e) {
+            System.err.println("Bad parameter: add_unk");
+            System.exit(3);
+        }
 
 		// Cornell data
 		Facebook context = new Facebook(options, args);
@@ -43,6 +58,6 @@ class FacebookTest {
 		System.out.println("FacebookTest: cleaning text...");
 		context.cleaning();
 		System.out.println("FacebookTest: exporting ... ");
-		context.exportData(export_path);
+		context.exportData(export_path, add_unk);
 	}	
 }

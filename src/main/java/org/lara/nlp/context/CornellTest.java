@@ -14,6 +14,13 @@ class CornellTest {
                 .required(true) 
                 .build();
         options.addOption(exportPathOption);
+		Option unkOption = Option.builder("add_unk") 
+                .desc("Number of unknown tokens to add") 
+                .hasArg(true) 
+                .argName("num") 
+                .required(false) 
+                .build();
+        options.addOption(unkOption);
 
         // Help function
 		Option helpFileOption = Option.builder("h") 
@@ -36,6 +43,14 @@ class CornellTest {
         String export_path = line.getOptionValue("export");
         String lines_path = line.getOptionValue("lines_file");
         String conversations_path = line.getOptionValue("conversations_file");
+        String add_unk_str = line.getOptionValue("add_unk", "0");
+        int add_unk = 0;
+        try {
+            add_unk =  Integer.valueOf(add_unk_str);
+        } catch (Exception e) {
+            System.err.println("Bad parameter: add_unk");
+            System.exit(3);
+        }
 
 		// Cornell data
 		Cornell context = new Cornell(options, args);
@@ -44,6 +59,6 @@ class CornellTest {
 		System.out.println("CornellTest: cleaning text...");
 		context.cleaning();
 		System.out.println("CornellTest: exporting ... ");
-		context.exportData(export_path);
+		context.exportData(export_path, add_unk);
 	}
 }
