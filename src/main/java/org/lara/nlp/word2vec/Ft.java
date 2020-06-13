@@ -124,6 +124,10 @@ public class Ft {
 		String output_file = line.getOptionValue("output");
 		boolean cbow = line.hasOption("cbow");
 		boolean skipgram = line.hasOption("skipgram");
+		if (cbow && skipgram) {
+			System.out.println("CBOW and skipgram cannot be activated at the same time");
+			System.exit(0);
+		}
 
 		String min_count_str = line.getOptionValue("min_count", "20");
 		int min_count = 20;
