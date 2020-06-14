@@ -6,17 +6,17 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import org.apache.commons.cli.*;
 
+import org.lara.nlp.OptionUtils;
+
+
 public class Simple extends Context {
 	// Structure
 	String filename;
 
 	// Constructor
 	public Simple(String filename, int min_length, int max_length) {
+		super(min_length, max_length);
 		this.filename = filename;
-		questions = new ArrayList<String> ();
-		answers = new ArrayList<String> ();
-		this.min_length = min_length;
-		this.max_length = max_length;
 	}
 
 	// Creating a dictionary that maps each line with its id
@@ -84,31 +84,10 @@ public class Simple extends Context {
         return options;
     }
 
-    public Simple(Options options, String[] args) throws ParseException {
-
-        CommandLineParser parser = new DefaultParser();
-        CommandLine line = parser.parse(options, args);
-
-        String filename = line.getOptionValue("conversations_file");
-
-        String min_length_str = line.getOptionValue("min_length", "0");
-        int min_length = 0;
-        try {
-            min_length =  Integer.valueOf(min_length_str);
-        } catch (Exception e) {
-            System.err.println("Bad parameter: min_length");
-            System.exit(3);
-        }
-
-        String max_length_str = line.getOptionValue("max_length", "99999");
-        int max_length = 99999;
-        try {
-            max_length =  Integer.valueOf(max_length_str);
-        } catch (Exception e) {
-            System.err.println("Bad parameter: max_length");
-            System.exit(3);
-        }
-
-        new Simple(filename, min_length, max_length);
+    // Pass arguments for the constructor
+    public Simple(CommandLine line ) {
+    	this(line.getOptionValue("conversations_file"),
+    		OptionUtils.getOptionValue(line, "min_length", 0),
+    		OptionUtils.getOptionValue(line, "max_length", 99999));
     }
 }

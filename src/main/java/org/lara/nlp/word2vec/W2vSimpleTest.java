@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import org.lara.nlp.context.Simple;
 import org.lara.nlp.word2vec.W2v;
 import org.apache.commons.cli.*;
+import org.lara.nlp.OptionUtils;
 
 class W2vSimpleTest {
 	public static void main(String[] args) throws Exception {
@@ -27,38 +28,17 @@ class W2vSimpleTest {
 		options.addOption(exportPathOption);
 
         // Help function
-		Option helpFileOption = Option.builder("h") 
-				.longOpt("help") 
-				.desc("Show help message") 
-				.build();
-		Options firstOptions = new Options();
-    	firstOptions.addOption(helpFileOption);
-		CommandLineParser firstParser = new DefaultParser();
-		CommandLine firstLine = firstParser.parse(firstOptions, args, true);
-		boolean helpMode = firstLine.hasOption("help");
-		if (helpMode) {
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("W2vSimpleTest", options, true);
-			System.exit(0);
-		}
+        OptionUtils.help("W2vSimpleTest", options, args);
 
-        CommandLineParser parser = new DefaultParser();
-        CommandLine line = parser.parse(options, args);
+        CommandLine line = OptionUtils.parseArgs(options, args);
         String export_path = line.getOptionValue("export");
         String input_path = line.getOptionValue("conversations_file");
         boolean useCustomIterator = line.hasOption("useCustomIterator");
-		String minWordFrequency_str = line.getOptionValue("minWordFrequency", "20");
-		int minWordFrequency = 20;
-		try {
-			minWordFrequency =  Integer.valueOf(minWordFrequency_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: minWordFrequency");
-			System.exit(3);
-		}
+        int minWordFrequency = OptionUtils.getOptionValue(line, "minWordFrequency", 20);
 
 		// Cornell data
 		if (!useCustomIterator) {
-			Simple context = new Simple(options, args);
+			Simple context = new Simple(line);
 			System.out.println("W2vSimpleTest: initializing from " + input_path + " ...");
 			context.init();
 			System.out.println("W2vSimpleTest: cleaning text...");
@@ -74,12 +54,12 @@ class W2vSimpleTest {
 				allWords.add("<UNK>");
 			}
 			System.out.println("W2vSimpleTest: creating the W2v object...");
-			W2v w2v = new W2v(allWords, options, args);
+			W2v w2v = new W2v(allWords, line);
 			System.out.println("W2vSimpleTest: export W2v model to " + export_path);
 			w2v.write_vectors(export_path);
 		} else {
-			System.out.println("W2vSimpleTest: creating the W2v object...");
-			W2v w2v = new W2v(input_path, options, args);
+			System.out.println("W2vSimpleTest: creating the W2v object with custom iterator ...");
+			W2v w2v = new W2v(input_path, line);
 			System.out.println("W2vSimpleTest: export W2v model to " + export_path);
 			w2v.write_vectors(export_path);
 		}

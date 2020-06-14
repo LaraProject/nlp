@@ -3,6 +3,7 @@ package org.lara.nlp.word2vec;
 import java.util.ArrayList;
 import org.lara.nlp.word2vec.Ft;
 import org.apache.commons.cli.*;
+import org.lara.nlp.OptionUtils;
 
 class FtTest {
 	public static void main(String[] args) throws Exception {
@@ -15,30 +16,34 @@ class FtTest {
                 .required(true) 
                 .build();
         options.addOption(exportPathOption);
+		Option customIteratorOption = Option.builder("useCustomIterator") 
+				.desc("Use SimpleLineIterator custom iterator") 
+				.required(false) 
+				.build();
+		options.addOption(exportPathOption);
 
         // Help function
-		Option helpFileOption = Option.builder("h") 
-				.longOpt("help") 
-				.desc("Show help message") 
-				.build();
-		Options firstOptions = new Options();
-    	firstOptions.addOption(helpFileOption);
-		CommandLineParser firstParser = new DefaultParser();
-		CommandLine firstLine = firstParser.parse(firstOptions, args, true);
-		boolean helpMode = firstLine.hasOption("help");
-		if (helpMode) {
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("FtTest", options, true);
-			System.exit(0);
-		}
+        OptionUtils.help("FtTest", options, args);
 
-        CommandLineParser parser = new DefaultParser();
-        CommandLine line = parser.parse(options, args);
+        CommandLine line = OptionUtils.parseArgs(options, args);
         String export_path = line.getOptionValue("export");
+		boolean useCustomIterator = line.hasOption("useCustomIterator");
 
-		System.out.println("FtTest: creating the fasttext object...");
-		Ft ft = new Ft(options, args);
-		System.out.println("FtTest: export fasttext model to " + export_path);
-		ft.write_vectors(export_path);
+		try {
+			Ft ft = new Ft();
+			if (useCustomIterator) {
+				System.out.println("FtTest: creating the fasttext object with custom iterator ...");
+				ft = new Ft(line, useCustomIterator);
+			} else {
+				System.out.println("FtTest: creating the fasttext object...");
+				ft = new Ft(line);
+			}
+			System.out.println("FtTest: export fasttext model to " + export_path);
+			ft.write_vectors(export_path);
+        } catch (Exception e) {
+            System.err.println("Ft: problem when creating Ft object");
+            e.printStackTrace();
+            System.exit(3);
+        }
 	}	
 }

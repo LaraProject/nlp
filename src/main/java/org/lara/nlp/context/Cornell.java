@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import org.apache.commons.cli.*;
 
+import org.lara.nlp.OptionUtils;
+
 public class Cornell extends Context {
 	// Structure
 	private HashMap<String,String> id_to_line;
@@ -14,12 +16,9 @@ public class Cornell extends Context {
 
 	// Constructor
 	public Cornell(String lines_filename, String conversations_filename, int min_length, int max_length) {
+		super(min_length, max_length);
 		id_to_line = getLines(lines_filename);
 		conversations_ids = getConversations(conversations_filename);
-		questions = new ArrayList<String> ();
-		answers = new ArrayList<String> ();
-		this.min_length = min_length;
-		this.max_length = max_length;
 	}
 
 	// Creating a dictionary that maps each line with its id
@@ -119,32 +118,11 @@ public class Cornell extends Context {
         return options;
     }
 
-    public Cornell(Options options, String[] args) throws ParseException {
-
-        CommandLineParser parser = new DefaultParser();
-        CommandLine line = parser.parse(options, args);
-
-        String lines_filename = line.getOptionValue("lines_file");
-        String conversations_filename = line.getOptionValue("conversations_file");
-
-        String min_length_str = line.getOptionValue("min_length", "5");
-        int min_length = 5;
-        try {
-            min_length =  Integer.valueOf(min_length_str);
-        } catch (Exception e) {
-            System.err.println("Bad parameter: min_length");
-            System.exit(3);
-        }
-
-        String max_length_str = line.getOptionValue("max_length", "30");
-        int max_length = 30;
-        try {
-            max_length =  Integer.valueOf(max_length_str);
-        } catch (Exception e) {
-            System.err.println("Bad parameter: max_length");
-            System.exit(3);
-        }
-
-        new Cornell(lines_filename, conversations_filename, min_length, max_length);
+    // Pass arguments for the constructor
+    public Cornell(CommandLine line) {
+        this(line.getOptionValue("lines_file"),
+        	line.getOptionValue("conversations_file"),
+        	OptionUtils.getOptionValue(line, "min_length", 5),
+        	OptionUtils.getOptionValue(line, "max_length", 30));
     }
 }

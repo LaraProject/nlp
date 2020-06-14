@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 import org.apache.commons.cli.*;
 
+import org.lara.nlp.OptionUtils;
+
 public class Facebook extends Context {
 	// Structure
 	String answerer;
@@ -25,11 +27,8 @@ public class Facebook extends Context {
 
 	// Constructor
 	public Facebook(String json_filename, String answerer, int min_length, int max_length) {
+		super(min_length, max_length);
 		this.answerer = answerer;
-		questions = new ArrayList<String>();
-		answers = new ArrayList<String>();
-		this.min_length = min_length;
-		this.max_length = max_length;
 		this.cur_sentence = "";
 		this.prev_conv = -1;
 		this.prev_subconv = -1;
@@ -119,31 +118,11 @@ public class Facebook extends Context {
         return options;
     }
 
-    public Facebook(Options options, String[] args) throws org.apache.commons.cli.ParseException {
-        CommandLineParser parser = new DefaultParser();
-        CommandLine line = parser.parse(options, args);
-
-        String json_filename = line.getOptionValue("fb_json");
-        String answerer = line.getOptionValue("answerer");
-
-        String min_length_str = line.getOptionValue("min_length", "0");
-        int min_length = 0;
-        try {
-            min_length =  Integer.valueOf(min_length_str);
-        } catch (Exception e) {
-            System.err.println("Bad parameter: min_length");
-            System.exit(3);
-        }
-
-        String max_length_str = line.getOptionValue("max_length", "40");
-        int max_length = 40;
-        try {
-            max_length =  Integer.valueOf(max_length_str);
-        } catch (Exception e) {
-            System.err.println("Bad parameter: max_length");
-            System.exit(3);
-        }
-
-        new Facebook(json_filename, answerer, min_length, max_length);
+    // Pass arguments for the constructor
+    public Facebook(CommandLine line) {
+        this(line.getOptionValue("fb_json"),
+        	line.getOptionValue("answerer"),
+        	OptionUtils.getOptionValue(line, "min_length", 0),
+        	OptionUtils.getOptionValue(line, "max_length", 40));
     }
 }

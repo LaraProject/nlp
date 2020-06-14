@@ -2,6 +2,7 @@ package org.lara.nlp.context;
 
 import org.lara.nlp.context.Facebook;
 import org.apache.commons.cli.*;
+import org.lara.nlp.OptionUtils;
 
 class FacebookTest {
 	public static void main(String[] args) throws Exception {
@@ -23,36 +24,15 @@ class FacebookTest {
         options.addOption(unkOption);
 
         // Help function
-		Option helpFileOption = Option.builder("h") 
-				.longOpt("help") 
-				.desc("Show help message") 
-				.build();
-		Options firstOptions = new Options();
-    	firstOptions.addOption(helpFileOption);
-		CommandLineParser firstParser = new DefaultParser();
-		CommandLine firstLine = firstParser.parse(firstOptions, args, true);
-		boolean helpMode = firstLine.hasOption("help");
-		if (helpMode) {
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("FacebookTest", options, true);
-			System.exit(0);
-		}
+        OptionUtils.help("FacebookTest", options, args);
  
-        CommandLineParser parser = new DefaultParser();
-        CommandLine line = parser.parse(options, args);
+        CommandLine line = OptionUtils.parseArgs(options, args);
         String export_path = line.getOptionValue("export");
         String input_path = line.getOptionValue("fb_json");
-        String add_unk_str = line.getOptionValue("add_unk", "0");
-        int add_unk = 0;
-        try {
-            add_unk =  Integer.valueOf(add_unk_str);
-        } catch (Exception e) {
-            System.err.println("Bad parameter: add_unk");
-            System.exit(3);
-        }
+        int add_unk = OptionUtils.getOptionValue(line, "add_unk", 0);
 
 		// Cornell data
-		Facebook context = new Facebook(options, args);
+		Facebook context = new Facebook(line);
 		System.out.println("FacebookTest: initializing from " + input_path + " ...");
 		context.init();
 		System.out.println("FacebookTest: cleaning text...");

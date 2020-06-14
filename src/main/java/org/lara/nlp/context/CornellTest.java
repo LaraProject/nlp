@@ -2,10 +2,11 @@ package org.lara.nlp.context;
 
 import org.lara.nlp.context.Cornell;
 import org.apache.commons.cli.*;
+import org.lara.nlp.OptionUtils;
 
 class CornellTest {
 	public static void main(String[] args) throws Exception {
-	// Arguments
+		// Arguments
 		Options options = Cornell.getOptions();
 		Option exportPathOption = Option.builder("export") 
                 .desc("Specify the path to export") 
@@ -23,37 +24,16 @@ class CornellTest {
         options.addOption(unkOption);
 
         // Help function
-		Option helpFileOption = Option.builder("h") 
-				.longOpt("help") 
-				.desc("Show help message") 
-				.build();
-		Options firstOptions = new Options();
-    	firstOptions.addOption(helpFileOption);
-		CommandLineParser firstParser = new DefaultParser();
-		CommandLine firstLine = firstParser.parse(firstOptions, args, true);
-		boolean helpMode = firstLine.hasOption("help");
-		if (helpMode) {
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("CornellTest", options, true);
-			System.exit(0);
-		}
+        OptionUtils.help("CornellTest", options, args);
 
-        CommandLineParser parser = new DefaultParser();
-        CommandLine line = parser.parse(options, args);
+        CommandLine line = OptionUtils.parseArgs(options, args);
         String export_path = line.getOptionValue("export");
         String lines_path = line.getOptionValue("lines_file");
         String conversations_path = line.getOptionValue("conversations_file");
-        String add_unk_str = line.getOptionValue("add_unk", "0");
-        int add_unk = 0;
-        try {
-            add_unk =  Integer.valueOf(add_unk_str);
-        } catch (Exception e) {
-            System.err.println("Bad parameter: add_unk");
-            System.exit(3);
-        }
+        int add_unk = OptionUtils.getOptionValue(line, "add_unk", 0);
 
 		// Cornell data
-		Cornell context = new Cornell(options, args);
+		Cornell context = new Cornell(line);
 		System.out.println("CornellTest: initializing from " + lines_path + " and " + conversations_path + "...");
 		context.init();
 		System.out.println("CornellTest: cleaning text...");

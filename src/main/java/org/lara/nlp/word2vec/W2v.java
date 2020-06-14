@@ -17,6 +17,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.apache.commons.cli.*;
 import org.lara.nlp.context.SimpleLineIterator;
 import org.lara.nlp.context.SimplePreProcessor;
+import org.lara.nlp.OptionUtils;
 
 public class W2v {
 	// Structure
@@ -156,76 +157,25 @@ public class W2v {
 		return options;
 	}
 
-	public void parse(Options options, String[] args)  throws ParseException {
-
-		CommandLineParser parser = new DefaultParser();
-		CommandLine line = parser.parse(options, args);
-
-		String minWordFrequency_str = line.getOptionValue("minWordFrequency", "20");
-		try {
-			minWordFrequency =  Integer.valueOf(minWordFrequency_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: minWordFrequency");
-			System.exit(3);
-		}
-
-		String dimension_str = line.getOptionValue("dimension", "100");
-		try {
-			dimension =  Integer.valueOf(dimension_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: dimension");
-			System.exit(3);
-		}
-
-		String window_size_str = line.getOptionValue("window_size", "5");
-		try {
-			window_size =  Integer.valueOf(window_size_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: window_size");
-			System.exit(3);
-		}
-
-
-		String epochs_str = line.getOptionValue("epochs", "5");
-		try {
-			epochs =  Integer.valueOf(epochs_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: epochs");
-			System.exit(3);
-		}
-
-		String iterations_str = line.getOptionValue("iterations", "5");
-		try {
-			iterations =  Integer.valueOf(iterations_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: iterations");
-			System.exit(3);
-		}
-
-		String workers_str = line.getOptionValue("workers", "2");
-		try {
-			workers =  Integer.valueOf(workers_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: workers");
-			System.exit(3);
-		}
-
-		String batch_size_str = line.getOptionValue("batch_size", "512");
-		try {
-			batch_size =  Integer.valueOf(batch_size_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: batch_size");
-			System.exit(3);
-		}
+	public W2v(ArrayList<String> words, CommandLine line) throws Exception {
+		this(words,
+			OptionUtils.getOptionValue(line, "minWordFrequency", 20),
+			OptionUtils.getOptionValue(line, "iterations", 5),
+			OptionUtils.getOptionValue(line, "epochs", 5),
+			OptionUtils.getOptionValue(line, "dimension", 100),
+			OptionUtils.getOptionValue(line, "workers", 2),
+			OptionUtils.getOptionValue(line, "batch_size", 512),
+			OptionUtils.getOptionValue(line, "line, window_size", 5));
 	}
 
-	public W2v(ArrayList<String> words, Options options, String[] args) throws ParseException {
-		parse(options, args);
-		new W2v(words, minWordFrequency, iterations, epochs, dimension, workers, batch_size, window_size);
-	}
-
-	public W2v(String input_path, Options options, String[] args) throws Exception {
-		parse(options, args);
-		new W2v(input_path, minWordFrequency, iterations, epochs, dimension, workers, batch_size, window_size);
+	public W2v(String input_path, CommandLine line) throws Exception {
+		this(input_path,
+			OptionUtils.getOptionValue(line, "minWordFrequency", 20),
+			OptionUtils.getOptionValue(line, "iterations", 5),
+			OptionUtils.getOptionValue(line, "epochs", 5),
+			OptionUtils.getOptionValue(line, "dimension", 100),
+			OptionUtils.getOptionValue(line, "workers", 2),
+			OptionUtils.getOptionValue(line, "batch_size", 512),
+			OptionUtils.getOptionValue(line, "line, window_size", 5));
 	}
 }

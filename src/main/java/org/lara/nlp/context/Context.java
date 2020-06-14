@@ -17,6 +17,14 @@ public abstract class Context {
 	public int min_length;
 	public int max_length;
 
+	// Constructor
+	public Context(int min_length, int max_length) {
+		questions = new ArrayList<String>();
+		answers = new ArrayList<String>();
+		this.min_length = min_length;
+		this.max_length = max_length;
+	}
+
 	// Filter by length
 	public void tokenize() {
 		process.tokenize();

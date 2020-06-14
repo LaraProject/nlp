@@ -2,6 +2,7 @@ package org.lara.nlp.context;
 
 import org.lara.nlp.context.Simple;
 import org.apache.commons.cli.*;
+import org.lara.nlp.OptionUtils;
 
 class SimpleTest {
 	public static void main(String[] args) throws Exception {
@@ -23,36 +24,15 @@ class SimpleTest {
         options.addOption(unkOption);
 
         // Help function
-		Option helpFileOption = Option.builder("h") 
-				.longOpt("help") 
-				.desc("Show help message") 
-				.build();
-		Options firstOptions = new Options();
-    	firstOptions.addOption(helpFileOption);
-		CommandLineParser firstParser = new DefaultParser();
-		CommandLine firstLine = firstParser.parse(firstOptions, args, true);
-		boolean helpMode = firstLine.hasOption("help");
-		if (helpMode) {
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("SimpleTest", options, true);
-			System.exit(0);
-		}
+        OptionUtils.help("SimpleTest", options, args);
 
-        CommandLineParser parser = new DefaultParser();
-        CommandLine line = parser.parse(options, args);
+        CommandLine line = OptionUtils.parseArgs(options, args);
         String export_path = line.getOptionValue("export");
         String input_path = line.getOptionValue("conversations_file");
-        String add_unk_str = line.getOptionValue("add_unk", "0");
-        int add_unk = 0;
-        try {
-            add_unk =  Integer.valueOf(add_unk_str);
-        } catch (Exception e) {
-            System.err.println("Bad parameter: add_unk");
-            System.exit(3);
-        }
+        int add_unk = OptionUtils.getOptionValue(line, "add_unk", 0);
 
 		// Cornell data
-		Simple context = new Simple(options, args);
+		Simple context = new Simple(line);
 		System.out.println("SimpleTest: initializing from " + input_path + " ...");
 		context.init();
 		System.out.println("SimpleTest: cleaning text...");

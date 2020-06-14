@@ -7,35 +7,18 @@ import java.io.File;
 import org.lara.nlp.context.SimpleLineIterator;
 import org.lara.nlp.context.SimplePreProcessor;
 import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
+import org.lara.nlp.OptionUtils;
 
 public class Ft {
 	// Structure
 	private FastText fasttext;
-	// Parameters
-	String input_file;
-	String output_file;
-	boolean cbow;
-	boolean skipgram;
-	boolean useCustomIterator;
-	int min_count = 20;
-	int dimension = 100;
-	int window_size = 5;
-	int epochs = 5;
-	int workers = 2;
 
 	// Constructor
 	public Ft(String input_file, String output_file, boolean cbow, boolean skipgram, int min_count, int dim, int window_size, int epochs, int workers) {
-		// Parameters
-		this.input_file = input_file;
-		this.output_file = output_file;
-		this.cbow = cbow;
-		this.skipgram = skipgram;
-		this.useCustomIterator = false;
-		this.min_count = min_count;
-		this.dimension = dim;
-		this.window_size = window_size;
-		this.epochs = epochs;
-		this.workers = workers;
+		if (cbow && skipgram) {
+			System.out.println("CBOW and skipgram cannot be activated at the same time");
+			System.exit(3);
+		}
 		// Build model
 		FastText fastText = FastText.builder()
 						.cbow(cbow)
@@ -54,17 +37,10 @@ public class Ft {
 	public Ft(String input_file, String output_file, boolean cbow, boolean skipgram, int min_count, int dim, int window_size, int epochs, int workers, boolean useCustomIterator) throws Exception {
 		SentenceIterator iter = new SimpleLineIterator(input_file);
 		iter.setPreProcessor(new SimplePreProcessor());
-		// Parameters
-		this.input_file = input_file;
-		this.output_file = output_file;
-		this.cbow = cbow;
-		this.skipgram = skipgram;
-		this.useCustomIterator = useCustomIterator;
-		this.min_count = min_count;
-		this.dimension = dim;
-		this.window_size = window_size;
-		this.epochs = epochs;
-		this.workers = workers;
+		if (cbow && skipgram) {
+			System.out.println("CBOW and skipgram cannot be activated at the same time");
+			System.exit(3);
+		}
 		// Build model
 		FastText fastText = FastText.builder()
 						.cbow(cbow)
@@ -157,10 +133,6 @@ public class Ft {
 				.argName("path") 
 				.required(true) 
 				.build();
-		Option customIteratorOption = Option.builder("useCustomIterator") 
-				.desc("Use SimpleLineIterator custom iterator") 
-				.required(false) 
-				.build();
 
 		Options options = new Options();
 		options.addOption(cbowOption);
@@ -172,73 +144,35 @@ public class Ft {
 		options.addOption(workersOption);
 		options.addOption(inputFileOption);
 		options.addOption(outputFileOption);
-		options.addOption(customIteratorOption);
 
 		return options;
 	}
 
-
-	public void parse(Options options, String[] args) throws ParseException {
-
-		CommandLineParser parser = new DefaultParser();
-		CommandLine line = parser.parse(options, args);
-		input_file = line.getOptionValue("input");
-		output_file = line.getOptionValue("output");
-		cbow = line.hasOption("cbow");
-		skipgram = line.hasOption("skipgram");
-		useCustomIterator = line.hasOption("useCustomIterator");
-		if (cbow && skipgram) {
-			System.out.println("CBOW and skipgram cannot be activated at the same time");
-			System.exit(0);
-		}
-
-		String min_count_str = line.getOptionValue("min_count", "20");
-		try {
-			min_count =  Integer.valueOf(min_count_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: min_count");
-			System.exit(3);
-		}
-
-		String dimension_str = line.getOptionValue("dimension", "100");
-		try {
-			dimension =  Integer.valueOf(dimension_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: dimension");
-			System.exit(3);
-		}
-
-		String window_size_str = line.getOptionValue("window_size", "5");
-		try {
-			window_size =  Integer.valueOf(window_size_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: window_size");
-			System.exit(3);
-		}
-
-		String epochs_str = line.getOptionValue("epochs", "5");
-		try {
-			epochs =  Integer.valueOf(epochs_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: epochs");
-			System.exit(3);
-		}
-
-		String workers_str = line.getOptionValue("workers", "2");
-		try {
-			workers =  Integer.valueOf(workers_str);
-		} catch (Exception e) {
-			System.err.println("Bad parameter: workers");
-			System.exit(3);
-		}
+	public Ft() {
 	}
 
-	public Ft(Options options, String[] args) throws Exception {
-		parse(options, args);
-		if (useCustomIterator)
-			new Ft(input_file, output_file, cbow, skipgram, min_count, dimension, window_size, epochs, workers, useCustomIterator);
-		else
-			new Ft(input_file, output_file, cbow, skipgram, min_count, dimension, window_size, epochs, workers);
+	public Ft(CommandLine line, boolean useCustomIterator) throws Exception {
+		this(line.getOptionValue("input"),
+			line.getOptionValue("output"),
+			line.hasOption("cbow"),
+			line.hasOption("useCustomIterator"),
+			OptionUtils.getOptionValue(line, "min_count", 20),
+			OptionUtils.getOptionValue(line, "dimension", 100),
+			OptionUtils.getOptionValue(line, "window_size", 5),
+			OptionUtils.getOptionValue(line, "epochs", 5),
+			OptionUtils.getOptionValue(line, "workers", 2),
+			true);
 	}
 
+	public Ft(CommandLine line) throws Exception {
+		this(line.getOptionValue("input"),
+			line.getOptionValue("output"),
+			line.hasOption("cbow"),
+			line.hasOption("useCustomIterator"),
+			OptionUtils.getOptionValue(line, "min_count", 20),
+			OptionUtils.getOptionValue(line, "dimension", 100),
+			OptionUtils.getOptionValue(line, "window_size", 5),
+			OptionUtils.getOptionValue(line, "epochs", 5),
+			OptionUtils.getOptionValue(line, "workers", 2));
+	}
 }
