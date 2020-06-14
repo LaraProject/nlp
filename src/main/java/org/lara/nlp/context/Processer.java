@@ -69,7 +69,7 @@ public class Processer {
 		// Clean emojis
 		text = clean_emoji(text);
 		// Remove punctuation
-		text = text.replaceAll("[\\p{Punct}]&&[^'?!:^-]", "");
+		text = text.replaceAll("[\\p{Punct}&&[^['?!:^-]]]", "");
 		text = text.replaceAll("\\^\\^", ":eyebrows:");
 		text = text.replaceAll("([\\p{IsLatin}]*+):++([\\p{IsLatin}_]++):++([\\p{IsLatin}]*+)", "$1 #" + "$2" + "# $3");
 		text = text.replaceAll("([\\p{IsLatin}]*+)([?!]++)([\\p{IsLatin}]*+)", "$1 $2 $3");
