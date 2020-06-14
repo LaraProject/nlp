@@ -38,7 +38,7 @@ public class SimpleLineIterator implements SentenceIterator, Iterable<String> {
 			count_line = count_line + 1;
             if (preProcessor != null)
                 next = this.preProcessor.preProcess(next);
-			return next;
+			return next + "\n";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
