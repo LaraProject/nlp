@@ -3,7 +3,7 @@ package org.lara.nlp.word2vec;
 import org.deeplearning4j.models.fasttext.FastText;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.apache.commons.cli.*;
-import java.io.File;
+import java.io.*;
 import org.lara.nlp.context.SimpleLineIterator;
 import org.lara.nlp.context.SimplePreProcessor;
 import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
@@ -13,48 +13,99 @@ public class Ft {
 	// Structure
 	private FastText fasttext;
 
-	// Constructor
+	// Constructor without custom iterator
 	public Ft(String input_file, String output_file, boolean cbow, boolean skipgram, int min_count, int dim, int window_size, int epochs, int workers) {
 		if (cbow && skipgram) {
-			System.out.println("CBOW and skipgram cannot be activated at the same time");
+			System.out.println("CBOW and skipgram cannot be enabled at the same time");
+			System.exit(3);
+		}
+		if (!cbow && !skipgram) {
+			System.out.println("CBOW and skipgram cannot be disabled at the same time");
 			System.exit(3);
 		}
 		// Build model
-		FastText fastText = FastText.builder()
-						.cbow(cbow)
-						.skipgram(skipgram)
-						.minCount(min_count)
-						.dim(dim)
-						.contextWindowSize(window_size)
-						.epochs(epochs)
-						.numThreads(workers)
-						.inputFile(input_file)
-						.outputFile(output_file)
-						.build();
-        fasttext.fit();
+		if (cbow)
+			fasttext = FastText.builder()
+							.cbow(true)
+							.minCount(min_count)
+							.dim(dim)
+							.contextWindowSize(window_size)
+							.epochs(epochs)
+							.numThreads(workers)
+							.inputFile(input_file)
+							.outputFile(output_file)
+							.build();
+		else if (skipgram)
+			fasttext = FastText.builder()
+							.skipgram(true)
+							.minCount(min_count)
+							.dim(dim)
+							.contextWindowSize(window_size)
+							.epochs(epochs)
+							.numThreads(workers)
+							.inputFile(input_file)
+							.outputFile(output_file)
+							.build();
+		fasttext.fit();
+	}
+
+	// Constructor with custom iterator
+	// Imported from https://github.com/eclipse/deeplearning4j/blob/master/deeplearning4j/deeplearning4j-nlp-parent/deeplearning4j-nlp/src/main/java/org/deeplearning4j/models/fasttext/FastText.java#L195
+	public String loadIterator(SentenceIterator iterator) {
+		if (iterator != null) {
+			try {
+				File tempFile = File.createTempFile("FTX", ".txt");
+				BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+				while (iterator.hasNext()) {
+					String sentence = iterator.nextSentence();
+					writer.write(sentence);
+				}
+				return tempFile.getAbsolutePath();
+			} catch (IOException e) {
+           		System.err.println("Ft: Cannot create temp file");
+            	e.printStackTrace();
+            	System.exit(3);
+            	return null;
+			}
+		}
+		return null;
 	}
 
 	public Ft(String input_file, String output_file, boolean cbow, boolean skipgram, int min_count, int dim, int window_size, int epochs, int workers, boolean useCustomIterator) throws Exception {
 		SentenceIterator iter = new SimpleLineIterator(input_file);
 		iter.setPreProcessor(new SimplePreProcessor());
 		if (cbow && skipgram) {
-			System.out.println("CBOW and skipgram cannot be activated at the same time");
+			System.out.println("CBOW and skipgram cannot be enabled at the same time");
+			System.exit(3);
+		}
+		if (!cbow && !skipgram) {
+			System.out.println("CBOW and skipgram cannot be disabled at the same time");
 			System.exit(3);
 		}
 		// Build model
-		FastText fastText = FastText.builder()
-						.cbow(cbow)
-						.skipgram(skipgram)
-						.minCount(min_count)
-						.dim(dim)
-						.contextWindowSize(window_size)
-						.epochs(epochs)
-						.numThreads(workers)
-						.iterator(iter)
-						.outputFile(output_file)
-						.build();
-		fastText.loadIterator();
-        fasttext.fit();
+		if (cbow)
+			fasttext = FastText.builder()
+							.cbow(true)
+							.minCount(min_count)
+							.dim(dim)
+							.contextWindowSize(window_size)
+							.epochs(epochs)
+							.numThreads(workers)
+							.inputFile(loadIterator(iter))
+							.outputFile(output_file)
+							.build();
+		else if (skipgram)
+			fasttext = FastText.builder()
+							.skipgram(true)
+							.minCount(min_count)
+							.dim(dim)
+							.contextWindowSize(window_size)
+							.epochs(epochs)
+							.numThreads(workers)
+							.inputFile(loadIterator(iter))
+							.outputFile(output_file)
+							.build();
+		fasttext.fit();
 	}
 
 	// Constructor with a given model
@@ -155,7 +206,7 @@ public class Ft {
 		this(line.getOptionValue("input"),
 			line.getOptionValue("output"),
 			line.hasOption("cbow"),
-			line.hasOption("useCustomIterator"),
+			line.hasOption("skipgram"),
 			OptionUtils.getOptionValue(line, "min_count", 20),
 			OptionUtils.getOptionValue(line, "dimension", 100),
 			OptionUtils.getOptionValue(line, "window_size", 5),
@@ -168,7 +219,7 @@ public class Ft {
 		this(line.getOptionValue("input"),
 			line.getOptionValue("output"),
 			line.hasOption("cbow"),
-			line.hasOption("useCustomIterator"),
+			line.hasOption("skipgram"),
 			OptionUtils.getOptionValue(line, "min_count", 20),
 			OptionUtils.getOptionValue(line, "dimension", 100),
 			OptionUtils.getOptionValue(line, "window_size", 5),

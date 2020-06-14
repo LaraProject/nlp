@@ -20,7 +20,7 @@ class FtTest {
 				.desc("Use SimpleLineIterator custom iterator") 
 				.required(false) 
 				.build();
-		options.addOption(exportPathOption);
+		options.addOption(customIteratorOption);
 
         // Help function
         OptionUtils.help("FtTest", options, args);
@@ -41,7 +41,7 @@ class FtTest {
 			System.out.println("FtTest: export fasttext model to " + export_path);
 			ft.write_vectors(export_path);
         } catch (Exception e) {
-            System.err.println("Ft: problem when creating Ft object");
+            System.err.println("FtTest: problem when creating Ft object");
             e.printStackTrace();
             System.exit(3);
         }

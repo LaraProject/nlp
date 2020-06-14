@@ -25,7 +25,7 @@ class W2vSimpleTest {
 				.desc("Use SimpleLineIterator custom iterator") 
 				.required(false) 
 				.build();
-		options.addOption(exportPathOption);
+		options.addOption(customIteratorOption);
 
         // Help function
         OptionUtils.help("W2vSimpleTest", options, args);
